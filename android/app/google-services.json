@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "26644968092",
+    "project_id": "malaebkom",
+    "storage_bucket": "malaebkom.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:26644968092:android:806c29e6ceb53f2363b359",
+        "android_client_info": {
+          "package_name": "com.example.malaebkom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "26644968092-ra5u0ahdiuekf2agf99l33lhgpgoqmpj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZ5DL8iW1zcR1BMUBXkCy5RCz9DyaXY1g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "26644968092-ra5u0ahdiuekf2agf99l33lhgpgoqmpj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
