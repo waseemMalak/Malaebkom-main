@@ -572,7 +572,7 @@ Future<void> newfieldPage(BuildContext context) async {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => NewFieldPage(),
+      builder: (context) => FieldOwnerForm(),
     ),
   );
 }
