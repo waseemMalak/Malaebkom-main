@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,6 +11,8 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 class FieldOwnerForm extends StatefulWidget {
   @override
@@ -102,6 +105,184 @@ class _UserImagePickerState extends State<UserImagePicker> {
   }
 }
 
+// class LocationPicker extends StatefulWidget {
+//   // final String apiKey;
+
+//   // LocationPicker({required this.apiKey});
+//   final String apiKey = "AIzaSyALKrb3AM1C9QLlAH4dG85FQNwV29UcPG4";
+
+//   LocationPicker({required String newApiKey}) {
+//     // Use the newApiKey value instead of the apiKey variable
+//     print("New API key is $newApiKey");
+//   }
+
+//   @override
+//   _LocationPickerState createState() => _LocationPickerState();
+// }
+
+// Future<bool> _requestLocationPermission() async {
+//   if (await Permission.locationWhenInUse.isGranted) {
+//     return true;
+//   } else {
+//     var status = await Permission.locationWhenInUse.request();
+//     return status == PermissionStatus.granted;
+//   }
+// }
+
+// class _LocationPickerState extends State<LocationPicker> {
+//   Completer<GoogleMapController> _controller = Completer();
+//   CameraPosition _initialCameraPosition = CameraPosition(
+//     target: LatLng(37.4219999, -122.0840575),
+//     zoom: 14.0,
+//   );
+//   LatLng _selectedLocation = LatLng(0, 0);
+
+//   void _onMapCreated(GoogleMapController controller) {
+//     _controller.complete(controller);
+//   }
+
+//   Future<LatLng?> _showLocationPickerDialog(BuildContext context) async {
+//     final GoogleMapController controller = await _controller.future;
+//     bool granted = await _requestLocationPermission();
+//     if (!granted) {
+//       // Handle the case when the user denies the permission request
+//       return null;
+//     }
+//     LatLng? selectedLocation;
+//     // ignore: use_build_context_synchronously
+//     await showDialog(
+//       context: context,
+//       builder: (BuildContext dialogContext) {
+//         // Create a new BuildContext object
+//         return AlertDialog(
+//           content: SizedBox(
+//             height: MediaQuery.of(dialogContext).size.height * 0.6,
+//             child: GoogleMap(
+//               initialCameraPosition: _initialCameraPosition,
+//               onTap: (LatLng location) {
+//                 setState(() {
+//                   _selectedLocation = location;
+//                 });
+//               },
+//               onMapCreated: _onMapCreated,
+//               markers: {
+//                 Marker(
+//                   markerId: MarkerId('selected_location'),
+//                   position: _selectedLocation,
+//                 ),
+//               },
+//               polylines: {
+//                 Polyline(
+//                   polylineId: PolylineId('selected_location_polyline'),
+//                   color: Colors.red,
+//                   points: [
+//                     _selectedLocation,
+//                   ],
+//                 ),
+//               },
+//               mapType: MapType.normal,
+//               myLocationEnabled: true,
+//               myLocationButtonEnabled: true,
+//               compassEnabled: true,
+//               zoomControlsEnabled: true,
+//               zoomGesturesEnabled: true,
+//               rotateGesturesEnabled: true,
+//               scrollGesturesEnabled: true,
+//               tiltGesturesEnabled: true,
+//               trafficEnabled: false,
+//               indoorViewEnabled: false,
+//               buildingsEnabled: true,
+//               mapToolbarEnabled: true,
+//             ),
+//           ),
+//           actions: <Widget>[
+//             TextButton(
+//               onPressed: () {
+//                 Navigator.of(dialogContext).pop();
+//               },
+//               child: Text('CANCEL'),
+//             ),
+//             TextButton(
+//               onPressed: () {
+//                 Navigator.of(dialogContext).pop(_selectedLocation);
+//               },
+//               child: Text('OK'),
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//     return selectedLocation;
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Pick Location'),
+//       ),
+//       body: Center(
+//         child: ElevatedButton(
+//           onPressed: () async {
+//             LatLng? location = await _showLocationPickerDialog(context);
+//             if (location != null) {
+//               setState(() {
+//                 _selectedLocation = location;
+//               });
+//             }
+//           },
+//           child: Text('Pick Location'),
+//         ),
+//       ),
+//     );
+//   }
+// }
+class MapPage extends StatefulWidget {
+  const MapPage({Key? key}) : super(key: key);
+
+  @override
+  _MapPageState createState() => _MapPageState();
+}
+
+class _MapPageState extends State<MapPage> {
+  LatLng _pickedLocation = LatLng(31.9632, 35.9306);
+
+  void _selectLocation(LatLng position) {
+    setState(() {
+      _pickedLocation = position;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Select Location'),
+      ),
+      body: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: _pickedLocation,
+          zoom: 14,
+        ),
+        onTap: _selectLocation,
+        markers: {
+          if (_pickedLocation != null)
+            Marker(
+              markerId: MarkerId('m1'),
+              position: _pickedLocation,
+            ),
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.check),
+        onPressed: () {
+          Navigator.of(context).pop(_pickedLocation);
+        },
+      ),
+    );
+  }
+}
+
 class _FieldOwnerFormState extends State<FieldOwnerForm> {
   final _formKey = GlobalKey<FormState>();
   final _fieldNameController = TextEditingController();
@@ -113,6 +294,38 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
   final _openingHoursController = TextEditingController();
   TimeOfDay _openingHoursStart = TimeOfDay(hour: 8, minute: 0);
   TimeOfDay _openingHoursEnd = TimeOfDay(hour: 20, minute: 0);
+
+  late GoogleMapController _controller;
+  LatLng _pickedLocation = LatLng(31.9632, 35.9306); // Set default value her
+
+  void _selectLocation(LatLng position) {
+    setState(() {
+      _pickedLocation = position;
+    });
+  }
+
+  Future<void> _selectOnMap() async {
+    final LatLng selectedLocation = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => FieldOwnerForm(),
+      ),
+    );
+    if (selectedLocation != null) {
+      setState(() {
+        _pickedLocation = selectedLocation;
+      });
+    }
+  }
+
+  Future<void> _navigateToMap() async {
+    final selectedLocation = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (ctx) => MapPage(),
+      ),
+    );
+    // Do something with the selectedLocation
+  }
 
   final List<String> _services = [
     'Football',
@@ -140,19 +353,18 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
     'Volleyball',
   ];
 
-  // String _selectedService = '';
-
   List<String> _selectedServices = [];
   List<String> _selectedSportsType = [];
   List<String> _pickedImages = [];
 
   List<Asset> _fieldImages = <Asset>[];
+  LatLng _location = LatLng(0, 0);
 
   Future<List<String>> _uploadImages(List<Asset> images) async {
     List<String> imageUrls = [];
     for (var image in images) {
       ByteData? byteData = await image.getByteData();
-      Uint8List imageData = byteData!.buffer.asUint8List();
+      Uint8List imageData = byteData.buffer.asUint8List();
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
       Reference firebaseStorageRef =
           FirebaseStorage.instance.ref().child('fieldImages/$fileName');
@@ -165,11 +377,6 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
   }
 
   @override
-  // void initState() {
-  //   super.initState();
-  //   _selectedService = _services.isNotEmpty ? _services[0] : '';
-  // }
-
   void dispose() {
     _fieldNameController.dispose();
     _locationController.dispose();
@@ -220,23 +427,110 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                       return null;
                     },
                   ),
-                  TextFormField(
-                    controller: _locationController,
-                    decoration: InputDecoration(
-                      labelText: 'Location',
-                      hintText: 'Enter Field Location ',
-                      hintStyle: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
+                  GestureDetector(
+                    onTap: () async {
+                      final LatLng selectedLocation = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MapPage(),
+                        ),
+                      );
+                      if (selectedLocation != null) {
+                        setState(() {
+                          _locationController.text =
+                              '${selectedLocation.latitude}, ${selectedLocation.longitude}';
+                        });
+                      }
+                    },
+                    child: AbsorbPointer(
+                      child: TextFormField(
+                        controller: _locationController,
+                        decoration: InputDecoration(
+                          labelText: 'Location',
+                          hintText: 'Tap to select location',
+                          prefixIcon: Icon(Icons.location_on),
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter a location';
+                          }
+                          return null;
+                        },
                       ),
                     ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter a location';
-                      }
-                      return null;
-                    },
                   ),
+                  // Container(
+                  //   child: GoogleMap(
+                  //     initialCameraPosition: CameraPosition(
+                  //       target: LatLng(31.9632, 35.9306),
+                  //       zoom: 14,
+                  //     ),
+                  //     onTap: _selectLocation,
+                  //     markers: _pickedLocation == null
+                  //         ? {}
+                  //         : {
+                  //             Marker(
+                  //               markerId: MarkerId('m1'),
+                  //               position: _pickedLocation,
+                  //             ),
+                  //           },
+                  //   ),
+                  //   height: MediaQuery.of(context).size.height * 0.7,
+                  //   width: double.infinity,
+                  // ),
+                  // ElevatedButton(
+                  //   child: Icon(Icons.check),
+                  //   onPressed: () {
+                  //     if (_pickedLocation != null) {
+                  //       Navigator.of(context).pop(_pickedLocation);
+                  //     }
+                  //   },
+                  // ),
+
+                  // GestureDetector(
+                  //   onTap: () async {
+                  //     LatLng? location = await Navigator.of(context).push(
+                  //       MaterialPageRoute(
+                  //           builder: (context) => LocationPicker(
+                  //                 newApiKey:
+                  //                     "AIzaSyALKrb3AM1C9QLlAH4dG85FQNwV29UcPG4",
+                  //               )),
+                  //     );
+                  //     if (location != null) {
+                  //       setState(() {
+                  //         _location = location;
+                  //       });
+                  //     }
+                  //   },
+                  //   child: Container(
+                  //     height: 50.0,
+                  //     decoration: BoxDecoration(
+                  //       border: Border.all(color: Colors.grey),
+                  //       borderRadius: BorderRadius.circular(4.0),
+                  //     ),
+                  //     child: Row(
+                  //       children: [
+                  //         Padding(
+                  //           padding:
+                  //               const EdgeInsets.symmetric(horizontal: 16.0),
+                  //           child: Icon(Icons.location_on),
+                  //         ),
+                  //         Expanded(
+                  //           child: Text(
+                  //             _location == LatLng(0, 0)
+                  //                 ? 'Tap to select location'
+                  //                 : 'Location selected',
+                  //             style: TextStyle(
+                  //               color: _location == LatLng(0, 0)
+                  //                   ? Colors.grey
+                  //                   : Colors.black,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   TextFormField(
                     controller: _priceController,
                     decoration: InputDecoration(
@@ -289,50 +583,9 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                       return null;
                     },
                   ),
-                  // TextFormField(
-                  //   controller: _fieldImagesController,
-                  //   decoration: InputDecoration(
-                  //     labelText: 'Field Images',
-                  //     hintText: 'Enter Field Image ',
-                  //     hintStyle: TextStyle(
-                  //       fontSize: 14,
-                  //       color: Colors.grey,
-                  //     ),
-                  //   ),
-                  //   validator: (value) {
-                  //     if (value!.isEmpty) {
-                  //       return 'Please enter at least one image URL';
-                  //     }
-                  //     return null;
-                  //   },
-                  // ),
-
-                  //   UserImagePicker((images)  async {
-                  //   setState(() {
-                  //     _pickedImages =
-                  //         images.map((image) => image.path).toList();
-                  //   });
-                  // }),
-                  // SizedBox(height: 10),
-                  // _pickedImages.isEmpty
-                  //     ? Text('No images selected.')
-                  //     : Wrap(
-                  //         spacing: 8,
-                  //         runSpacing: 8,
-                  //         children: _pickedImages.map((image) {
-                  //           return Image.file(
-                  //             File(image),
-                  //             width: 100,
-                  //             height: 100,
-                  //             fit: BoxFit.cover,
-                  //           );
-                  //         }).toList(),
-                  //       ),
-
                   SizedBox(
                     height: 10,
                   ),
-
                   ElevatedButton(
                     onPressed: () async {
                       if (await Permission.photos.request().isGranted) {
@@ -355,7 +608,6 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                     },
                     child: Text('Select Images'),
                   ),
-
                   SizedBox(
                     height: 10,
                   ),
@@ -569,7 +821,7 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
       await FirebaseFirestore.instance.collection('fields').add({
         'fieldName': _fieldNameController.text,
         'price': double.parse(_priceController.text),
-        'location': _locationController.text,
+        'location': _pickedLocation.toString(),
         // 'fieldImages': _fieldImagesController.text.split(','),
         'fieldImages': imageUrls,
         // 'fieldServices': _fieldServicesController.text.split(','),

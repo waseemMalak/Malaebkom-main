@@ -43,6 +43,10 @@ dependencies:
   path_provider: ^2.0.14
   multi_image_picker: ^4.7.14
   permission_handler: ^8.3.0
+  google_maps_flutter: ^2.1.0
+  geolocator: ^7.6.2
+  flutter_google_places: ^0.3.0
+
 
 
 dev_dependencies:
