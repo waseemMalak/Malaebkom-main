@@ -9,10 +9,21 @@ import '../my_drawer_header_owner.dart';
 import 'addNewField.dart';
 
 class Field {
-  final String name;
+  late String fieldId;
+  final String fieldName;
   final String imagePath;
+  final double price;
+  final List<String> fieldServices;
+  final List<String> fieldSports;
 
-  Field({required this.name, required this.imagePath});
+  Field({
+    required this.fieldName,
+    required this.imagePath,
+    required this.fieldId,
+    required this.price,
+    required this.fieldServices,
+    required this.fieldSports,
+  });
 }
 
 class FieldOwnerApp extends StatelessWidget {
@@ -100,6 +111,18 @@ class _FieldOwnerState extends State<FieldOwner> {
                     itemBuilder: (context, index) {
                       final fieldName = documents[index]['fieldName'];
                       final fieldImages = documents[index]['fieldImages'];
+                      final fieldId = documents[index].id;
+                      final price = documents[index]['price'];
+                      // final fieldServices = documents[index]['fieldServices'];
+                      final fieldServices = documents[index]['fieldServices'];
+                      final services = fieldServices is String
+                          ? [fieldServices]
+                          : fieldServices.cast<String>();
+                      final fieldSports = documents[index]['fieldSports'];
+                      final sports = fieldSports is String
+                          ? [fieldSports]
+                          : fieldSports.cast<String>();
+
                       return Container(
                         margin: EdgeInsets.all(10),
                         child: Column(
@@ -115,13 +138,20 @@ class _FieldOwnerState extends State<FieldOwner> {
                             SizedBox(height: 10),
                             GestureDetector(
                               onTap: () {
+                                print(documents[index].id);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => FieldDetails(
-                                        field: Field(
-                                            name: fieldName,
-                                            imagePath: fieldImages[0])),
+                                      field: Field(
+                                        fieldName: fieldName,
+                                        imagePath: fieldImages[0],
+                                        fieldId: fieldId,
+                                        price: price,
+                                        fieldServices: services,
+                                        fieldSports: sports,
+                                      ),
+                                    ),
                                   ),
                                 );
                               },
@@ -281,7 +311,7 @@ class FieldCard extends StatelessWidget {
             builder: (BuildContext context) {
               return AlertDialog(
                 title: Text('Field Details'),
-                content: Text(field.name),
+                content: Text(field.fieldName),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -298,7 +328,7 @@ class FieldCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              field.name, // Display field name above the image
+              field.fieldName, // Display field name above the image
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Container(
