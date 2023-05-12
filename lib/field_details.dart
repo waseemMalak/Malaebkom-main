@@ -65,7 +65,7 @@ class _FieldDetailsState extends State<FieldDetails> {
       }
     });
     _sportsType.forEach((sportType) {
-      if (fieldServices.contains(sportType)) {
+      if (fieldSports.contains(sportType)) {
         _selectedSportsType.add(sportType);
       }
     });
@@ -131,183 +131,287 @@ class _FieldDetailsState extends State<FieldDetails> {
       appBar: AppBar(
         title: Text(widget.field.fieldName),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: 'Name',
-                  border: OutlineInputBorder(),
+      body: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.black,
+            width: 2,
+            style: BorderStyle.solid,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Editing Field: ' + widget.field.fieldName,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                  ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a name';
-                  }
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(widget.field.imagePath),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a name';
+                    }
 
-                  return null;
-                },
-              ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _imagePathController,
-                decoration: InputDecoration(
-                  labelText: 'Image Path',
-                  border: OutlineInputBorder(),
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an image path';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _priceController,
-                decoration: InputDecoration(
-                  labelText: 'Price',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a price';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Please enter a valid number';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 3,
-              ),
-              Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey,
-                    width: 1,
+                SizedBox(height: 16.0),
+                TextFormField(
+                  controller: _imagePathController,
+                  decoration: InputDecoration(
+                    labelText: 'Image Path',
+                    border: OutlineInputBorder(),
                   ),
-                  borderRadius: BorderRadius.circular(8),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an image path';
+                    }
+                    return null;
+                  },
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 3,
-                    ),
-                    Text(
-                      'Field Services',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                SizedBox(height: 16.0),
+                // TextFormField(
+                //   controller: _priceController,
+                //   decoration: InputDecoration(
+                //     labelText: 'Price',
+                //     border: OutlineInputBorder(),
+                //   ),
+                //   keyboardType: TextInputType.number,
+                //   validator: (value) {
+                //     if (value == null || value.isEmpty) {
+                //       return 'Please enter a price';
+                //     }
+                //     if (double.tryParse(value) == null) {
+                //       return 'Please enter a valid number';
+                //     }
+                //     return null;
+                //   },
+                // ),
+                FormField(
+                  builder: (FormFieldState<String> state) {
+                    return TextFormField(
+                      controller: _priceController,
+                      decoration: InputDecoration(
+                        labelText: 'Price',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  double currentValue =
+                                      double.parse(_priceController.text);
+                                  double newValue = currentValue + 1.0;
+                                  _priceController.text =
+                                      newValue.toStringAsFixed(2);
+                                });
+                              },
+                              icon: Icon(Icons.arrow_drop_up),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  double currentValue =
+                                      double.parse(_priceController.text);
+                                  double newValue = currentValue - 1.0;
+                                  if (newValue < 0) {
+                                    newValue = 0.0;
+                                  }
+                                  _priceController.text =
+                                      newValue.toStringAsFixed(2);
+                                });
+                              },
+                              icon: Icon(Icons.arrow_drop_down),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Container(
-                      height: 120, // Set a fixed height for the list view
-                      child: ListView.builder(
-                        itemCount: _services.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final service = _services[index];
-                          return CheckboxListTile(
-                            title: Text(service),
-                            value: _selectedServices.contains(service),
-                            onChanged: (bool? value) {
-                              setState(() {
-                                if (value!) {
-                                  _selectedServices.add(service);
-                                } else {
-                                  _selectedServices.remove(service);
-                                }
-                              });
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 3,
-                    ),
-                    Text(
-                      'Field suitable sport type',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Container(
-                      height: 120, // Set a fixed height for the list view
-                      child: ListView.builder(
-                        itemCount: _sportsType.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final sportType = _sportsType[index];
-                          return CheckboxListTile(
-                            title: Text(sportType),
-                            value: _selectedSportsType.contains(sportType),
-                            onChanged: (bool? value) {
-                              setState(() {
-                                if (value!) {
-                                  _selectedSportsType.add(sportType);
-                                } else {
-                                  _selectedSportsType.remove(sportType);
-                                }
-                              });
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    final updatedField = Field(
-                      fieldName: _nameController.text,
-                      imagePath: _imagePathController.text,
-                      fieldId: widget.field.fieldId,
-                      price: double.parse(_priceController.text),
-                      fieldServices: _selectedServices,
-                      fieldSports: _selectedSportsType,
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a price';
+                        }
+                        if (double.tryParse(value) == null) {
+                          return 'Please enter a valid number';
+                        }
+                        return null;
+                      },
                     );
-                    await updateFieldInFirestore(
-                        widget.field.fieldId, updatedField);
-                    Navigator.pop(context);
-                  }
-                },
-                child: Text('Update Field Details'),
-              ),
-            ],
+                  },
+                ),
+
+                SizedBox(
+                  height: 3,
+                ),
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 3,
+                      ),
+                      Text(
+                        'Field Services',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Container(
+                        height: 120, // Set a fixed height for the list view
+                        child: ListView.builder(
+                          itemCount: _services.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final service = _services[index];
+                            return CheckboxListTile(
+                              title: Text(service),
+                              value: _selectedServices.contains(service),
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  if (value!) {
+                                    _selectedServices.add(service);
+                                  } else {
+                                    _selectedServices.remove(service);
+                                  }
+                                });
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 3,
+                      ),
+                      Text(
+                        'Field suitable sport type',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Container(
+                        height: 120, // Set a fixed height for the list view
+                        child: ListView.builder(
+                          itemCount: _sportsType.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final sportType = _sportsType[index];
+                            return CheckboxListTile(
+                              title: Text(sportType),
+                              value: _selectedSportsType.contains(sportType),
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  if (value!) {
+                                    _selectedSportsType.add(sportType);
+                                  } else {
+                                    _selectedSportsType.remove(sportType);
+                                  }
+                                });
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          final updatedField = Field(
+                            fieldName: _nameController.text,
+                            imagePath: _imagePathController.text,
+                            fieldId: widget.field.fieldId,
+                            price: double.parse(_priceController.text),
+                            fieldServices: _selectedServices,
+                            fieldSports: _selectedSportsType,
+                          );
+                          await updateFieldInFirestore(
+                              widget.field.fieldId, updatedField);
+                          Navigator.pop(context);
+                        }
+                      },
+                      icon: Icon(Icons.edit),
+                      label: Text('Update Field Details'),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        deleteDocument(widget.field.fieldId);
+                        // Navigate back to the previous screen
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.delete),
+                      label: Text('Delete'),
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.red),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -326,4 +430,11 @@ Future<void> updateFieldInFirestore(String fieldId, Field newField) async {
   } catch (error) {
     print('Error updating field: $error');
   }
+}
+
+void deleteDocument(String documentId) async {
+  await FirebaseFirestore.instance
+      .collection('fields')
+      .doc(documentId)
+      .delete();
 }

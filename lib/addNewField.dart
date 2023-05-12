@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'field_owner.dart';
 
 import '../pickers/user_image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -141,11 +142,17 @@ class _MapPageState extends State<MapPage> {
             ),
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.check),
-        onPressed: () {
-          Navigator.of(context).pop(_pickedLocation);
-        },
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(left: 25.0, bottom: 20.0),
+        child: Align(
+          alignment: Alignment.bottomLeft,
+          child: FloatingActionButton(
+            child: Icon(Icons.check),
+            onPressed: () {
+              Navigator.of(context).pop(_pickedLocation);
+            },
+          ),
+        ),
       ),
     );
   }
@@ -402,8 +409,54 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                         // Handle the case where the user denied permission
                       }
                     },
-                    child: Text('Select Images'),
+                    child: Row(
+                      children: [
+                        Icon(Icons.image),
+                        SizedBox(width: 10),
+                        Text('Select Images'),
+                      ],
+                    ),
                   ),
+                  if (_fieldImages.isNotEmpty)
+                    Container(
+                      height: 100.0,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _fieldImages.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          Asset asset = _fieldImages[index];
+                          return Container(
+                            margin: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  width: 100.0,
+                                  height: 100.0,
+                                  child: AssetThumb(
+                                    asset: asset,
+                                    width: 100,
+                                    height: 100,
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: IconButton(
+                                    icon:
+                                        Icon(Icons.delete, color: Colors.green),
+                                    onPressed: () {
+                                      setState(() {
+                                        _fieldImages.remove(asset);
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   SizedBox(
                     height: 10,
                   ),
@@ -630,6 +683,12 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Field added successfully')),
       );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => FieldOwnerApp()),
+      );
+
       _formKey.currentState!.reset();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
