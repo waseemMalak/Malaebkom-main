@@ -46,6 +46,7 @@ dependencies:
   google_maps_flutter: ^2.1.0
   geolocator: ^7.6.2
   flutter_google_places: ^0.3.0
+  autocomplete_textfield: ^2.0.1
 
 
 

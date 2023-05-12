@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:malaebkom/player_profile.dart';
 import 'package:malaebkom/player_reservations.dart';
+import 'player_view_fields.dart';
 
 import 'login.dart';
 import 'my_drawer_header_owner.dart';
@@ -15,7 +16,7 @@ class Player extends StatefulWidget {
 }
 
 class _PlayerState extends State<Player> {
-  var currentPage = DrawerSections.home;
+  var currentPage = DrawerSections.viewFields;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,6 +46,169 @@ class _PlayerState extends State<Player> {
           ),
         ),
       ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              "What Are You Looking For?",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlayerViewField(),
+                      ),
+                    );
+                  },
+                  child: Card(
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          height: 200,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 2.0,
+                            ),
+                          ),
+                          child: Image.asset(
+                            'assets/images/stadium1.jpg',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Fields',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    elevation: 5,
+                    margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
+                  ),
+                ),
+                Card(
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        height: 200,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 2.0,
+                          ),
+                        ),
+                        child: Image.asset(
+                          'assets/images/matches.jpg',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Matches',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  elevation: 5,
+                  margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
+                ),
+                Card(
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        height: 200,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 2.0,
+                          ),
+                        ),
+                        child: Image.asset(
+                          'assets/images/clubss.webp',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Clubs',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  elevation: 5,
+                  margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -72,6 +236,8 @@ class _PlayerState extends State<Player> {
                 currentPage == DrawerSections.profile ? true : false),
             menuItem(3, "Reservations", Icons.calendar_today,
                 currentPage == DrawerSections.reservations ? true : false),
+            menuItem(4, "Fields", Icons.stadium,
+                currentPage == DrawerSections.viewFields ? true : false),
           ],
         ));
   }
@@ -90,6 +256,9 @@ class _PlayerState extends State<Player> {
                 } else if (id == 3) {
                   currentPage = DrawerSections.reservations;
                   reservationPage(context);
+                } else if (id == 4) {
+                  currentPage = DrawerSections.viewFields;
+                  viewFieldsPage(context);
                 }
               });
             },
@@ -122,6 +291,7 @@ enum DrawerSections {
   home,
   profile,
   reservations,
+  viewFields,
 }
 
 Future<void> reservationPage(BuildContext context) async {
@@ -140,6 +310,16 @@ Future<void> profilePage(BuildContext context) async {
     context,
     MaterialPageRoute(
       builder: (context) => PlayerProfile(),
+    ),
+  );
+}
+
+Future<void> viewFieldsPage(BuildContext context) async {
+  CircularProgressIndicator();
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PlayerViewField(),
     ),
   );
 }
