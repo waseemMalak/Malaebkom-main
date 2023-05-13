@@ -16,7 +16,7 @@ class Player extends StatefulWidget {
 }
 
 class _PlayerState extends State<Player> {
-  var currentPage = DrawerSections.viewFields;
+  var currentPage = DrawerSections.home;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

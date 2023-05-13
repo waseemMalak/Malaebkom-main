@@ -18,12 +18,18 @@ class PlayerViewField extends StatefulWidget {
 }
 
 class _PlayerViewFieldState extends State<PlayerViewField> {
-  List<DocumentSnapshot> fields = []; // list of all fields in firestore
-  List<DocumentSnapshot> filteredFields = []; // list of fields after filtering
-  GlobalKey<AutoCompleteTextFieldState<String>> searchKey =
-      GlobalKey(); // key for search bar
-  TextEditingController searchController =
-      TextEditingController(); // controller for search bar
+  List<DocumentSnapshot> fields = [];
+  List<DocumentSnapshot> filteredFields = [];
+  GlobalKey<AutoCompleteTextFieldState<String>> searchKey = GlobalKey();
+  TextEditingController searchController = TextEditingController();
+
+  bool _sortAscending = true;
+
+  void _sortFields() {
+    setState(() {
+      _sortAscending = !_sortAscending;
+    });
+  }
 
   @override
   void initState() {
@@ -34,20 +40,24 @@ class _PlayerViewFieldState extends State<PlayerViewField> {
   void getFields() async {
     QuerySnapshot snapshot =
         await FirebaseFirestore.instance.collection('fields').get();
-    print(snapshot); // print the snapshot
     setState(() {
       fields = snapshot.docs;
       filteredFields = fields;
     });
   }
 
-  // function to filter fields by name
   void filterFields(String query) {
     List<DocumentSnapshot> filteredList = [];
-    fields.forEach((field) {
-      String fieldName = field['fieldName'].toString().toLowerCase();
-      if (fieldName.contains(query.toLowerCase())) {
-        filteredList.add(field);
+    List<String> fieldNames =
+        fields.map((e) => e['fieldName'].toString()).toList();
+    fieldNames.forEach((fieldName) {
+      if (fieldName.toLowerCase().contains(query.toLowerCase())) {
+        fields.forEach((field) {
+          if (field['fieldName'].toString().toLowerCase() ==
+              fieldName.toLowerCase()) {
+            filteredList.add(field);
+          }
+        });
       }
     });
     setState(() {
@@ -55,7 +65,7 @@ class _PlayerViewFieldState extends State<PlayerViewField> {
     });
   }
 
-  var currentPage = DrawerSections.home;
+  var currentPage = DrawerSections.viewFields;
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +110,16 @@ class _PlayerViewFieldState extends State<PlayerViewField> {
               },
               decoration: InputDecoration(
                 labelText: 'Search by field name',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search),
+                labelStyle: TextStyle(
+                  color: Colors.green,
+                ),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.green),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.green),
+                ),
+                prefixIcon: Icon(Icons.search, color: Colors.green),
               ),
             ),
           ),
@@ -113,11 +131,89 @@ class _PlayerViewFieldState extends State<PlayerViewField> {
                     itemBuilder: (context, index) {
                       DocumentSnapshot field = filteredFields[index];
                       return ListTile(
-                        title: Text(field['fieldName']),
-                        subtitle: Column(
+                        contentPadding: EdgeInsets.all(10),
+                        title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Price: ${field['price']}'),
+                            Text(
+                              field['fieldName'],
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 3,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.5),
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Stack(
+                                children: [
+                                  Image.network(
+                                    field['fieldImages'][0],
+                                    height: 150,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.bottomCenter,
+                                          end: Alignment.topCenter,
+                                          colors: [
+                                            Colors.black.withOpacity(0.8),
+                                            Colors.transparent
+                                          ],
+                                        ),
+                                      ),
+                                      padding: EdgeInsets.all(8.0),
+                                      height: 50,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Starting From: ${field['price'].toString()} JD',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {},
+                                            style: ElevatedButton.styleFrom(
+                                              primary: Colors.green,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
+                                              ),
+                                            ),
+                                            child: Text('Book now'),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 5),
                           ],
                         ),
                       );
@@ -153,6 +249,8 @@ class _PlayerViewFieldState extends State<PlayerViewField> {
                 currentPage == DrawerSections.profile ? true : false),
             menuItem(3, "Reservations", Icons.calendar_today,
                 currentPage == DrawerSections.reservations ? true : false),
+            menuItem(4, "Fields", Icons.stadium,
+                currentPage == DrawerSections.viewFields ? true : false),
           ],
         ));
   }
@@ -172,6 +270,9 @@ class _PlayerViewFieldState extends State<PlayerViewField> {
                 } else if (id == 3) {
                   currentPage = DrawerSections.reservations;
                   reservationPage(context);
+                } else if (id == 4) {
+                  currentPage = DrawerSections.viewFields;
+                  viewFieldsPage(context);
                 }
               });
             },
@@ -204,6 +305,7 @@ enum DrawerSections {
   home,
   profile,
   reservations,
+  viewFields,
 }
 
 Future<void> HomePage(BuildContext context) async {
@@ -232,6 +334,16 @@ Future<void> profilePage(BuildContext context) async {
     context,
     MaterialPageRoute(
       builder: (context) => PlayerProfile(),
+    ),
+  );
+}
+
+Future<void> viewFieldsPage(BuildContext context) async {
+  CircularProgressIndicator();
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PlayerViewField(),
     ),
   );
 }
