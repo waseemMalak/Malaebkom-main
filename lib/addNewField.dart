@@ -106,8 +106,60 @@ class _UserImagePickerState extends State<UserImagePicker> {
   }
 }
 
+// class MapPage extends StatefulWidget {
+//   const MapPage({Key? key}) : super(key: key);
+
+//   @override
+//   _MapPageState createState() => _MapPageState();
+// }
+
+// class _MapPageState extends State<MapPage> {
+//   LatLng _pickedLocation = LatLng(31.9632, 35.9306);
+
+//   void _selectLocation(LatLng position) {
+//     setState(() {
+//       _pickedLocation = position;
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Select Location'),
+//       ),
+//       body: GoogleMap(
+//         initialCameraPosition: CameraPosition(
+//           target: _pickedLocation,
+//           zoom: 14,
+//         ),
+//         onTap: _selectLocation,
+//         markers: {
+//           if (_pickedLocation != null)
+//             Marker(
+//               markerId: MarkerId('m1'),
+//               position: _pickedLocation,
+//             ),
+//         },
+//       ),
+//       floatingActionButton: Padding(
+//         padding: EdgeInsets.only(left: 25.0, bottom: 20.0),
+//         child: Align(
+//           alignment: Alignment.bottomLeft,
+//           child: FloatingActionButton(
+//             child: Icon(Icons.check),
+//             onPressed: () {
+//               Navigator.of(context).pop(_pickedLocation);
+//             },
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 class MapPage extends StatefulWidget {
-  const MapPage({Key? key}) : super(key: key);
+  final LatLng initialLocation;
+  const MapPage({Key? key, required this.initialLocation}) : super(key: key);
 
   @override
   _MapPageState createState() => _MapPageState();
@@ -130,7 +182,7 @@ class _MapPageState extends State<MapPage> {
       ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
-          target: _pickedLocation,
+          target: widget.initialLocation,
           zoom: 14,
         ),
         onTap: _selectLocation,
@@ -173,16 +225,37 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
   late GoogleMapController _controller;
   LatLng _pickedLocation = LatLng(31.9632, 35.9306); // Set default value her
 
-  void _selectLocation(LatLng position) {
-    setState(() {
-      _pickedLocation = position;
-    });
+  // void _selectLocation(LatLng position) {
+  //   setState(() {
+  //     _pickedLocation = position;
+  //   });
+  // }
+
+  void _selectLocation() async {
+    final selectedLocation = await Navigator.push<LatLng>(
+      context,
+      MaterialPageRoute(
+        builder: (ctx) => MapPage(initialLocation: _pickedLocation),
+      ),
+    );
+    if (selectedLocation != null) {
+      setState(() {
+        _pickedLocation = selectedLocation;
+        _locationController.text =
+            '${_pickedLocation.latitude}, ${_pickedLocation.longitude}';
+      });
+      print('Selected location: $_pickedLocation');
+    } else {
+      print('No location selected.');
+    }
   }
 
   Future<void> _selectOnMap() async {
-    final LatLng selectedLocation = await Navigator.of(context).push(
+    final selectedLocation = await Navigator.of(context).push<LatLng>(
       MaterialPageRoute(
-        builder: (ctx) => FieldOwnerForm(),
+        builder: (ctx) => MapPage(
+          initialLocation: _pickedLocation,
+        ),
       ),
     );
     if (selectedLocation != null) {
@@ -196,10 +269,16 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
     final selectedLocation = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (ctx) => MapPage(),
+        builder: (ctx) => MapPage(
+          initialLocation: _pickedLocation,
+        ),
       ),
     );
-    // Do something with the selectedLocation
+    if (selectedLocation != null) {
+      setState(() {
+        _pickedLocation = selectedLocation;
+      });
+    }
   }
 
   final List<String> _services = [
@@ -307,7 +386,9 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                       final LatLng selectedLocation = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MapPage(),
+                          builder: (context) => MapPage(
+                            initialLocation: _pickedLocation,
+                          ),
                         ),
                       );
                       if (selectedLocation != null) {
@@ -670,7 +751,8 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
       await FirebaseFirestore.instance.collection('fields').add({
         'fieldName': _fieldNameController.text,
         'price': double.parse(_priceController.text),
-        'location': _pickedLocation.toString(),
+        // 'location': GeoPoint(_pickedLocation.latitude, _pickedLocation.longitude),
+        'location': _locationController.text,
         // 'fieldImages': _fieldImagesController.text.split(','),
         'fieldImages': imageUrls,
         // 'fieldServices': _fieldServicesController.text.split(','),

@@ -5,7 +5,7 @@ import 'package:malaebkom/player_profile.dart';
 import 'package:malaebkom/player_reservations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'player.dart';
-
+import 'player_view_field_details.dart';
 import 'login.dart';
 import 'my_drawer_header_owner.dart';
 import 'owner_Reservations.dart';
@@ -196,7 +196,16 @@ class _PlayerViewFieldState extends State<PlayerViewField> {
                                             ),
                                           ),
                                           ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PlayerViewFieldDetials(
+                                                          field: field),
+                                                ),
+                                              );
+                                            },
                                             style: ElevatedButton.styleFrom(
                                               primary: Colors.green,
                                               shape: RoundedRectangleBorder(
