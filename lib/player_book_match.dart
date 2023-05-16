@@ -5,6 +5,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+
 class PlayerBookMatch extends StatefulWidget {
   final DocumentSnapshot field;
 
@@ -251,6 +253,92 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
             Text(
               'Field booking total price: ${price.toStringAsFixed(2)} JD',
               style: TextStyle(fontSize: 18),
+            ),
+            Spacer(), // Add a spacer to push the button to the bottom
+            ElevatedButton(
+              onPressed: () {
+                String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+                // Create a new match document in the matches collection
+                FirebaseFirestore.instance
+                    .collection('fields/${widget.field.id}/matches')
+                    .add({
+                  'fieldId': widget.field.id,
+                  'userId': userId,
+                  'price': price,
+                  'duration': selectedDuration,
+                  'startingHour': selectedTime.format(context),
+                }).then((value) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Booking Confirmation'),
+                        content: Text('Booking successful!'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }).catchError((error) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Error'),
+                        content: Text('Booking failed. Please try again.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                });
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Booking Confirmation'),
+                      content: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                              'Selected Date: ${DateFormat('yyyy-MM-dd').format(selectedDate)}'),
+                          Text(
+                              'Selected Time: ${selectedTime.format(context)}'),
+                          Text(
+                              'Selected Duration: ${selectedDuration.toString()} hours'),
+                          Text(
+                              'Match Type: ${selectedMatchType == MatchType.private ? 'Private' : 'Public'} Match'),
+                          Text('Total Price: ${price.toStringAsFixed(2)} JD'),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            // Close the dialog when the user presses the OK button
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Text('Confirm Booking'),
             ),
           ],
         ),
