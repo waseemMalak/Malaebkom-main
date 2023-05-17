@@ -299,7 +299,7 @@ class _LoginPageState extends State<LoginPage> {
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-        if (documentSnapshot.get('rool') == "Field Owner") {
+        if (documentSnapshot.get('role') == "Field Owner") {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(

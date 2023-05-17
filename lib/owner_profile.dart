@@ -19,6 +19,44 @@ class ownerProfile extends StatefulWidget {
 class _ownerProfileState extends State<ownerProfile> {
   var currentPage = DrawerSections.profile;
   //final ref= FirbaseDatabase.instance.ref('user');
+
+  Future<int> getFieldCount() async {
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('fields')
+        .where('userId', isEqualTo: currentUserId)
+        .get();
+
+    return querySnapshot.size;
+  }
+
+  Future<void> fetchFieldCount() async {
+    try {
+      final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('fields')
+          .where('userId', isEqualTo: currentUserId)
+          .get();
+
+      setState(() {
+        fieldCount = Future.value(querySnapshot.size);
+      });
+    } catch (e) {
+      print('Error fetching field count: $e');
+      setState(() {
+        fieldCount = Future.error(e.toString());
+      });
+    }
+  }
+
+  late Future<int> fieldCount;
+
+  @override
+  void initState() {
+    super.initState();
+    fieldCount = getFieldCount();
+  }
+
   @override
   Widget build(BuildContext context) {
     final _width = MediaQuery.of(context).size.width;
@@ -131,7 +169,7 @@ class _ownerProfileState extends State<ownerProfile> {
                             child: new Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  headerChild('Number of Fields', 3),
+                                  headerChild('Number of Fields', fieldCount)
                                 ]),
                           ),
                         ),
@@ -298,22 +336,42 @@ Future<void> reservationPage(BuildContext context) async {
   );
 }
 
-Widget headerChild(String header, int value) => new Expanded(
-        child: new Column(
-      children: <Widget>[
-        new Text(header),
-        new SizedBox(
-          height: 8.0,
-        ),
-        new Text(
-          '$value',
-          style: new TextStyle(
-              fontSize: 14.0,
-              color: const Color(0xFF26CBE6),
-              fontWeight: FontWeight.bold),
-        )
-      ],
-    ));
+// Updated headerChild widget:
+Widget headerChild(String header, Future<int>? value, {int fallback = 0}) =>
+    Expanded(
+      child: Column(
+        children: <Widget>[
+          Text(header),
+          SizedBox(height: 8.0),
+          FutureBuilder<int>(
+            future: value,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final fieldValue = snapshot.data!;
+                return Text(
+                  '$fieldValue',
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: const Color(0xFF26CBE6),
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                print('Error retrieving field count: ${snapshot.error}');
+              }
+              return Text(
+                '$fallback',
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: const Color(0xFF26CBE6),
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
 
 Widget infoChild(double width, IconData icon, data) => new Padding(
       padding: new EdgeInsets.only(bottom: 8.0),

@@ -36,7 +36,7 @@ class _RegisterState extends State<Register> {
     'Field Owner',
   ];
   var _currentItemSelected = "Player";
-  var rool = "Player";
+  var role = "Player";
 
   File? _userImageFile;
   void _pickedImage(File image) {
@@ -301,7 +301,7 @@ class _RegisterState extends State<Register> {
                               onChanged: (newValueSelected) {
                                 setState(() {
                                   _currentItemSelected = newValueSelected!;
-                                  rool = newValueSelected;
+                                  role = newValueSelected;
                                 });
                               },
                               value: _currentItemSelected,
@@ -354,7 +354,7 @@ class _RegisterState extends State<Register> {
                                     emailController.text,
                                     passwordController.text,
                                     _userImageFile as File,
-                                    rool);
+                                    role);
                               },
                               child: Text(
                                 "Register",
@@ -382,7 +382,7 @@ class _RegisterState extends State<Register> {
   }
 
   void signUp(String name, String phone, String email, String password,
-      File image, String rool) async {
+      File image, String role) async {
     CircularProgressIndicator();
     if (_userImageFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -394,13 +394,13 @@ class _RegisterState extends State<Register> {
     if (_formkey.currentState!.validate()) {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) => {postDetailsToFirestore(name, phone, email, rool)})
+          .then((value) => {postDetailsToFirestore(name, phone, email, role)})
           .catchError((e) {});
     }
   }
 
   postDetailsToFirestore(
-      String name, String phone, String email, String rool) async {
+      String name, String phone, String email, String role) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     var user = _auth.currentUser;
     final imageref = FirebaseStorage.instance
@@ -416,7 +416,7 @@ class _RegisterState extends State<Register> {
       'phone': mobile.text,
       'email': emailController.text,
       'image_url': url,
-      'rool': rool,
+      'role': role,
     });
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginPage()));

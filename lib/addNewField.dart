@@ -106,57 +106,6 @@ class _UserImagePickerState extends State<UserImagePicker> {
   }
 }
 
-// class MapPage extends StatefulWidget {
-//   const MapPage({Key? key}) : super(key: key);
-
-//   @override
-//   _MapPageState createState() => _MapPageState();
-// }
-
-// class _MapPageState extends State<MapPage> {
-//   LatLng _pickedLocation = LatLng(31.9632, 35.9306);
-
-//   void _selectLocation(LatLng position) {
-//     setState(() {
-//       _pickedLocation = position;
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Select Location'),
-//       ),
-//       body: GoogleMap(
-//         initialCameraPosition: CameraPosition(
-//           target: _pickedLocation,
-//           zoom: 14,
-//         ),
-//         onTap: _selectLocation,
-//         markers: {
-//           if (_pickedLocation != null)
-//             Marker(
-//               markerId: MarkerId('m1'),
-//               position: _pickedLocation,
-//             ),
-//         },
-//       ),
-//       floatingActionButton: Padding(
-//         padding: EdgeInsets.only(left: 25.0, bottom: 20.0),
-//         child: Align(
-//           alignment: Alignment.bottomLeft,
-//           child: FloatingActionButton(
-//             child: Icon(Icons.check),
-//             onPressed: () {
-//               Navigator.of(context).pop(_pickedLocation);
-//             },
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 class MapPage extends StatefulWidget {
   final LatLng initialLocation;
   const MapPage({Key? key, required this.initialLocation}) : super(key: key);
@@ -224,12 +173,6 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
 
   late GoogleMapController _controller;
   LatLng _pickedLocation = LatLng(31.9632, 35.9306); // Set default value her
-
-  // void _selectLocation(LatLng position) {
-  //   setState(() {
-  //     _pickedLocation = position;
-  //   });
-  // }
 
   void _selectLocation() async {
     final selectedLocation = await Navigator.push<LatLng>(
@@ -497,6 +440,9 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                         Text('Select Images'),
                       ],
                     ),
+                    style: ElevatedButton.styleFrom(
+                      primary: _fieldImages.isEmpty ? Colors.red : null,
+                    ),
                   ),
                   if (_fieldImages.isNotEmpty)
                     Container(
@@ -739,6 +685,14 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
   }
 
   void _addField() async {
+    if (_fieldImages.isEmpty) {
+      // Show an error message or handle the case where an image selection is required
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select an image')),
+      );
+      return;
+    }
+
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
       DocumentReference fieldRef =
