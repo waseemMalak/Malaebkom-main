@@ -6,7 +6,6 @@ import 'package:malaebkom/pickers/user_image_picker.dart';
 import 'login.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-// import 'model.dart';
 
 class Register extends StatefulWidget {
   @override
