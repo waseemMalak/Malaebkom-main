@@ -602,7 +602,8 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                       GestureDetector(
                         onTap: () => _selectOpeningHoursStart(context),
                         child: Container(
-                          padding: const EdgeInsets.all(12.0),
+                          padding:
+                              const EdgeInsets.fromLTRB(12.0, 12.0, 11.0, 12.0),
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey),
                             borderRadius: BorderRadius.circular(4.0),
@@ -615,7 +616,8 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                       GestureDetector(
                         onTap: () => _selectOpeningHoursEnd(context),
                         child: Container(
-                          padding: const EdgeInsets.all(12.0),
+                          padding:
+                              const EdgeInsets.fromLTRB(12.0, 12.0, 11.0, 12.0),
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey),
                             borderRadius: BorderRadius.circular(4.0),

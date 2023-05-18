@@ -4,6 +4,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
+import 'player.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -263,11 +264,17 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                 FirebaseFirestore.instance
                     .collection('fields/${widget.field.id}/matches')
                     .add({
+                  'matchDate': DateFormat('dd MMM yyyy').format(selectedDate),
                   'fieldId': widget.field.id,
                   'userId': userId,
                   'price': price,
                   'duration': selectedDuration,
                   'startingHour': selectedTime.format(context),
+                  'matchType': selectedMatchType.name,
+                  'fieldImage': widget.field['fieldImages'],
+                  'matchServices': widget.field['fieldServices'].toString(),
+                  'matchSportType': widget.field['fieldSports'].toString(),
+                  'matchHeldAt': widget.field['fieldName'],
                 }).then((value) {
                   showDialog(
                     context: context,
@@ -328,8 +335,10 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                       actions: [
                         TextButton(
                           onPressed: () {
-                            // Close the dialog when the user presses the OK button
-                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Player()),
+                            );
                           },
                           child: Text('OK'),
                         ),

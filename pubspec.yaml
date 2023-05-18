@@ -50,6 +50,7 @@ dependencies:
   geocoding: ^2.0.1
   url_launcher: ^6.0.3
   carousel_slider: ^4.0.0
+  flutter_rating_bar: ^4.0.0
 
 
 

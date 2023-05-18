@@ -19,7 +19,11 @@ class _PlayerViewMatchesState extends State<PlayerViewMatches> {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> matches = [];
       for (var fieldDoc in snapshot.docs) {
         var matchDocs = await fieldDoc.reference.collection('matches').get();
-        matches.addAll(matchDocs.docs);
+        for (var matchDoc in matchDocs.docs) {
+          if (matchDoc.data()['matchType'] == 'public') {
+            matches.add(matchDoc);
+          }
+        }
       }
       return matches;
     });
