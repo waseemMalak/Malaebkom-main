@@ -1,7 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'player_join_match.dart';
-import 'package:intl/intl.dart';
+
+class PlayerJoinMatchPage extends StatelessWidget {
+  final QueryDocumentSnapshot<Map<String, dynamic>> match;
+
+  PlayerJoinMatchPage({required this.match});
+
+  @override
+  Widget build(BuildContext context) {
+    // Use the match data here to display the join match page
+    // You can access the match properties using match['propertyName']
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Join Match'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Match Details'),
+            Text('Match Held At: ${match['matchHeldAt']}'),
+            Text('Price: \$${match['price'].toStringAsFixed(2)}'),
+            Text('Starting Hour: ${match['startingHour']}'),
+            Text('match created by: ${match['matchCreator']}'),
+
+            // Add more widgets to display other match details as needed
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class PlayerViewMatches extends StatefulWidget {
   @override
@@ -18,26 +47,12 @@ class _PlayerViewMatchesState extends State<PlayerViewMatches> {
         .collection('fields')
         .snapshots()
         .asyncMap((QuerySnapshot<Map<String, dynamic>> snapshot) async {
-      final now = DateTime.now();
       List<QueryDocumentSnapshot<Map<String, dynamic>>> matches = [];
       for (var fieldDoc in snapshot.docs) {
         var matchDocs = await fieldDoc.reference.collection('matches').get();
         for (var matchDoc in matchDocs.docs) {
           if (matchDoc.data()['matchType'] == 'public') {
-            final matchStartingHour = matchDoc.data()['startingHour'] as String;
-            final matchDate = DateFormat('dd MMM yyyy')
-                .parse(matchDoc.data()['matchDate'] as String);
-            final matchDateTime = DateTime(
-              matchDate.year,
-              matchDate.month,
-              matchDate.day,
-              _getHour(matchStartingHour),
-              _getMinute(matchStartingHour),
-            );
-
-            if (matchDateTime.isAfter(now)) {
-              matches.add(matchDoc);
-            }
+            matches.add(matchDoc);
           }
         }
       }
@@ -45,28 +60,13 @@ class _PlayerViewMatchesState extends State<PlayerViewMatches> {
     });
   }
 
-  int _getHour(String startingHour) {
-    final hourString = startingHour.split(':')[0];
-    final isPM = startingHour.toLowerCase().contains('pm');
-
-    if (isPM) {
-      return int.parse(hourString) + 12; // Convert to 24-hour format
-    } else {
-      return int.parse(hourString);
-    }
-  }
-
-  int _getMinute(String startingHour) {
-    final minuteString = startingHour.split(':')[1].split(' ')[0];
-    return int.parse(minuteString);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Player View Matches'),
-        backgroundColor: Colors.green,
+        backgroundColor:
+            Colors.green, // Set the AppBar background color to green
       ),
       body: StreamBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
         stream: matchesStream,
@@ -78,6 +78,7 @@ class _PlayerViewMatchesState extends State<PlayerViewMatches> {
               itemBuilder: (context, index) {
                 final match = matches[index];
                 final fieldImages = match['fieldImage'] as List<dynamic>;
+                final matchCreator = match['matchCreator'] as String;
                 final matchHeldAt = match['matchHeldAt'] as String;
                 final price = match['price'] as double;
                 final startingHour = match['startingHour'] as String;
@@ -144,9 +145,10 @@ class _PlayerViewMatchesState extends State<PlayerViewMatches> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.green,
+                            primary:
+                                Colors.green, // Set the button color to green
                           ),
-                          child: Text('View Match Details'),
+                          child: Text('Join Match'),
                         ),
                       ),
                     ],

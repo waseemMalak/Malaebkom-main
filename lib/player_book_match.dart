@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:malaebkom/my_drawer_header_owner.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
@@ -257,8 +258,19 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
             ),
             Spacer(), // Add a spacer to push the button to the bottom
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 String? userId = FirebaseAuth.instance.currentUser?.uid;
+                String? userName;
+
+                // Retrieve the userName from the "users" collection
+                DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(userId)
+                    .get();
+
+                if (userSnapshot.exists) {
+                  userName = userSnapshot.get('userName');
+                }
 
                 // Create a new match document in the matches collection
                 FirebaseFirestore.instance
@@ -267,6 +279,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                   'matchDate': DateFormat('dd MMM yyyy').format(selectedDate),
                   'fieldId': widget.field.id,
                   'userId': userId,
+                  'matchCreator': userName,
                   'price': price,
                   'duration': selectedDuration,
                   'startingHour': selectedTime.format(context),
@@ -275,6 +288,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                   'matchServices': widget.field['fieldServices'].toString(),
                   'matchSportType': widget.field['fieldSports'].toString(),
                   'matchHeldAt': widget.field['fieldName'],
+                  'matchLocation': widget.field['location'],
                 }).then((value) {
                   showDialog(
                     context: context,
