@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PlayerJoinMatchPage extends StatelessWidget {
   final QueryDocumentSnapshot<Map<String, dynamic>> match;
@@ -60,22 +61,116 @@ class PlayerJoinMatchPage extends StatelessWidget {
                     'Match Date: ${match['matchDate']}',
                     style: TextStyle(fontSize: 18),
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 4),
                   Text(
                     'Starting Hour: ${match['startingHour']}',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(height: 8),
+                  Divider(
+                    thickness: 2, // Adjust the thickness as desired
+                    color: Colors.black, // Adjust the color as desired
+                  ),
+                  Text(
+                    'Match Creator Info:',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Match created by: ${match['matchCreator']}',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Phone Number: ${match['matchCreatorNumber']}',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  Divider(
+                    thickness: 2, // Adjust the thickness as desired
+                    color: Colors.black, // Adjust the color as desired
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Match Services:',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '${match['matchServices']}',
                     style: TextStyle(fontSize: 18),
                   ),
                 ],
               ),
             ),
           ),
-          SizedBox(height: 8),
-          Text(
-            'Match created by: ${match['matchCreator']}',
-            style: TextStyle(fontSize: 18),
+        ],
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          IconButton(
+            icon: Icon(Icons.location_on),
+            onPressed: () {
+              String matchLocation = match['matchLocation'];
+              String mapUrl =
+                  'https://www.google.com/maps/search/?api=1&query=$matchLocation';
+              launch(mapUrl);
+            },
+          ),
+          GestureDetector(
+            onTap: () {
+              String matchLocation = match['matchLocation'];
+              String mapUrl =
+                  'https://www.google.com/maps/search/?api=1&query=$matchLocation';
+              launch(mapUrl);
+            },
+            child: Text('Match Location on Google Maps'),
+          ),
+          SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Join Match'),
+                    content: Text('Join match at: ${match['matchHeldAt']}'),
+                    actions: [
+                      TextButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: Text('Join'),
+                        onPressed: () {
+                          // Perform the join match action
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.green,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+            ),
+            child: Text('Join Match!'),
           ),
         ],
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }
@@ -130,6 +225,7 @@ class _PlayerViewMatchesState extends State<PlayerViewMatches> {
                 final price = match['price'] as double;
                 final startingHour = match['startingHour'] as String;
                 final matchDate = match['matchDate'] as String;
+                final matchCreatorPhone = match['MatchCreatorNumber'] as String;
 
                 return Card(
                   elevation: 2,
