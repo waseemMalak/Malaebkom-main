@@ -6,7 +6,6 @@ import 'package:malaebkom/player_reservations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login.dart';
 import 'my_drawer_header_owner.dart';
-import 'owner_Reservations.dart';
 
 class PlayerProfile extends StatefulWidget {
   const PlayerProfile({super.key});
@@ -19,6 +18,31 @@ class _PlayerProfileState extends State<PlayerProfile> {
   var currentPage = DrawerSections.profile;
   @override
   Widget build(BuildContext context) {
+    TextEditingController _emailController =
+        TextEditingController(text: getCurrentUseremail().toString());
+    TextEditingController _phoneController = TextEditingController();
+
+    Future<void> saveProfileChanges() async {
+      String newEmail = _emailController.text;
+      String newPhone = _phoneController.text;
+
+      // Perform necessary validations on the newEmail and newPhone values
+
+      try {
+        await FirebaseAuth.instance.currentUser?.updateEmail(newEmail);
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({'phone': newPhone});
+
+        // Show a success message or perform any other desired action
+      } catch (e) {
+        // Handle any errors that occur during the update process
+        print(e.toString());
+        // Show an error message or perform any other desired action
+      }
+    }
+
     final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
     return new Container(
@@ -141,7 +165,6 @@ class _PlayerProfileState extends State<PlayerProfile> {
                                   },
                                 ),
                               ),
-                              infoChild(_width, Icons.password, '********'),
                               MaterialButton(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.all(
@@ -149,12 +172,55 @@ class _PlayerProfileState extends State<PlayerProfile> {
                                 elevation: 5.0,
                                 height: 40,
                                 onPressed: () {
-                                  CircularProgressIndicator();
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Player(),
-                                    ),
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('Edit Profile'),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            TextField(
+                                              controller: _emailController,
+                                              decoration: InputDecoration(
+                                                labelText: 'Email',
+                                              ),
+                                            ),
+                                            TextField(
+                                              controller: _phoneController,
+                                              decoration: InputDecoration(
+                                                labelText: 'Phone Number',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            child: Text('Cancel'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: Text('Save'),
+                                            onPressed: () {
+                                              // Call a function to update the user's email and phone number
+                                              saveProfileChanges();
+                                              Navigator.of(context).pop();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Profile updated successfully'),
+                                                  duration:
+                                                      Duration(seconds: 2),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   );
                                 },
                                 child: Row(

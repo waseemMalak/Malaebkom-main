@@ -36,6 +36,8 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
   DurationSelection durationSelection = DurationSelection.oneHour;
   MatchType selectedMatchType = MatchType.private;
   double selectedDuration = 1.0; // Default duration multiplier
+  TextEditingController phoneNumberController = TextEditingController();
+  RegExp phoneNumberPattern = RegExp(r'^07[789]\d{7}$');
 
   @override
   void initState() {
@@ -181,7 +183,13 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
     double price = widget.field['price'] * selectedDuration;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Booking Field: ${widget.field['fieldName']}'),
+        title: Text(
+          'Booking Field: ${widget.field['fieldName']}',
+          style: TextStyle(
+            color: Colors.white, // Set the text color to white
+          ),
+        ),
+        backgroundColor: Colors.green, // Set the background color to green
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -256,11 +264,13 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
               'Field booking total price: ${price.toStringAsFixed(2)} JD',
               style: TextStyle(fontSize: 18),
             ),
+
             Spacer(), // Add a spacer to push the button to the bottom
             ElevatedButton(
               onPressed: () async {
                 String? userId = FirebaseAuth.instance.currentUser?.uid;
                 String? userName;
+                String? userPhone;
 
                 // Retrieve the userName from the "users" collection
                 DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
@@ -270,6 +280,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
 
                 if (userSnapshot.exists) {
                   userName = userSnapshot.get('userName');
+                  userPhone = userSnapshot.get('phone');
                 }
 
                 // Create a new match document in the matches collection
@@ -280,6 +291,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                   'fieldId': widget.field.id,
                   'userId': userId,
                   'matchCreator': userName,
+                  'matchCreatorNumber': userPhone,
                   'price': price,
                   'duration': selectedDuration,
                   'startingHour': selectedTime.format(context),
@@ -362,6 +374,9 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                 );
               },
               child: Text('Confirm Booking'),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+              ),
             ),
           ],
         ),

@@ -65,14 +65,23 @@ class _PlayerViewMatchesState extends State<PlayerViewMatches> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Player View Matches'),
+        title: Text('View Matches'),
         backgroundColor: Colors.green,
       ),
       body: StreamBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
         stream: matchesStream,
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasData) {
             final matches = snapshot.data!;
+            if (matches.isEmpty) {
+              return Center(
+                child: Text('Currently No Matches Available Check Again Later'),
+              );
+            }
             return ListView.builder(
               itemCount: matches.length,
               itemBuilder: (context, index) {
@@ -81,7 +90,7 @@ class _PlayerViewMatchesState extends State<PlayerViewMatches> {
                 final matchHeldAt = match['matchHeldAt'] as String;
                 final price = match['price'] as double;
                 final startingHour = match['startingHour'] as String;
-
+                final matchDate = match['matchDate'];
                 return Card(
                   elevation: 2,
                   child: Stack(
@@ -127,6 +136,14 @@ class _PlayerViewMatchesState extends State<PlayerViewMatches> {
                                 fontSize: 16,
                               ),
                             ),
+                            SizedBox(height: 4),
+                            Text(
+                              'match Date: $matchDate',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -155,10 +172,12 @@ class _PlayerViewMatchesState extends State<PlayerViewMatches> {
               },
             );
           } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
           } else {
             return Center(
-              child: CircularProgressIndicator(),
+              child: Text('No matches found.'),
             );
           }
         },
