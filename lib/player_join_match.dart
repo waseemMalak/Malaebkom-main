@@ -68,8 +68,8 @@ class PlayerJoinMatchPage extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Divider(
-                    thickness: 2, // Adjust the thickness as desired
-                    color: Colors.black, // Adjust the color as desired
+                    thickness: 2,
+                    color: Colors.black,
                   ),
                   Text(
                     'Match Creator Info:',
@@ -89,8 +89,8 @@ class PlayerJoinMatchPage extends StatelessWidget {
                     style: TextStyle(fontSize: 18),
                   ),
                   Divider(
-                    thickness: 2, // Adjust the thickness as desired
-                    color: Colors.black, // Adjust the color as desired
+                    thickness: 2,
+                    color: Colors.black,
                   ),
                   SizedBox(height: 4),
                   Text(

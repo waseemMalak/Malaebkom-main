@@ -8,6 +8,96 @@ import 'login.dart';
 import 'my_drawer_header_owner.dart';
 import 'owner_Reservations.dart';
 
+class EditProfileDialog extends StatefulWidget {
+  final String email;
+  final String phone;
+
+  EditProfileDialog({required this.email, required this.phone});
+
+  @override
+  _EditProfileDialogState createState() => _EditProfileDialogState();
+}
+
+class _EditProfileDialogState extends State<EditProfileDialog> {
+  late TextEditingController _emailController;
+  late TextEditingController _phoneController;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController(text: widget.email);
+    _phoneController = TextEditingController(text: widget.phone);
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Edit Profile'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _emailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
+            ),
+          ),
+          TextField(
+            controller: _phoneController,
+            decoration: InputDecoration(
+              labelText: 'Phone Number',
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          child: Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+          child: Text('Save'),
+          onPressed: () {
+            // Call a function to update the user's email and phone number
+            saveProfileChanges(
+              _emailController.text,
+              _phoneController.text,
+            );
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Profile updated successfully'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Future<void> saveProfileChanges(String email, String phone) async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+        'email': email,
+        'phone': phone,
+      });
+    } catch (e) {
+      print('Error updating profile: $e');
+    }
+  }
+}
+
 class PlayerProfile extends StatefulWidget {
   const PlayerProfile({super.key});
 
@@ -21,12 +111,25 @@ class _PlayerProfileState extends State<PlayerProfile> {
   Widget build(BuildContext context) {
     TextEditingController _emailController =
         TextEditingController(text: getCurrentUseremail().toString());
+    // TextEditingController _phoneController =
+    //     TextEditingController(text: getCurrentUserName().toString());
     TextEditingController _phoneController = TextEditingController();
+
+    @override
+    void initState() {
+      super.initState();
+      // Fetch the phone number from Firestore and set it as the initial value
+      getCurrentphone().then((phone) async {
+        setState(() {
+          _phoneController.text =
+              phone ?? ''; // Assign the phone number to the controller
+        });
+      });
+    }
+
     Future<void> saveProfileChanges() async {
       String newEmail = _emailController.text;
       String newPhone = _phoneController.text;
-
-      // Perform necessary validations on the newEmail and newPhone values
 
       try {
         await FirebaseAuth.instance.currentUser?.updateEmail(newEmail);
@@ -167,58 +270,20 @@ class _PlayerProfileState extends State<PlayerProfile> {
                               ),
                               MaterialButton(
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(20.0))),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
+                                ),
                                 elevation: 5.0,
                                 height: 40,
-                                onPressed: () {
+                                onPressed: () async {
+                                  final email = await getCurrentUseremail();
+                                  final phone = await getCurrentphone();
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text('Edit Profile'),
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            TextField(
-                                              controller: _emailController,
-                                              decoration: InputDecoration(
-                                                labelText: 'Email',
-                                              ),
-                                            ),
-                                            TextField(
-                                              controller: _phoneController,
-                                              decoration: InputDecoration(
-                                                labelText: 'Phone Number',
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            child: Text('Cancel'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          TextButton(
-                                            child: Text('Save'),
-                                            onPressed: () {
-                                              // Call a function to update the user's email and phone number
-                                              saveProfileChanges();
-                                              Navigator.of(context).pop();
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                      'Profile updated successfully'),
-                                                  duration:
-                                                      Duration(seconds: 2),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
+                                      return EditProfileDialog(
+                                        email: email ?? '',
+                                        phone: phone ?? '',
                                       );
                                     },
                                   );
