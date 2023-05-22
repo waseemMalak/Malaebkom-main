@@ -30,6 +30,14 @@ enum MatchType {
 }
 
 class _PlayerBookMatchState extends State<PlayerBookMatch> {
+  int _remainingWords = 200;
+
+  void _updateRemainingWords(String value) {
+    setState(() {
+      _remainingWords = 200 - value.trim().split(' ').length;
+    });
+  }
+
   late DateTime selectedDate;
   late TimeOfDay selectedTime;
   List<TimeOfDay> availableTimes = [];
@@ -37,6 +45,8 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
   MatchType selectedMatchType = MatchType.private;
   double selectedDuration = 1.0; // Default duration multiplier
   TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+
   RegExp phoneNumberPattern = RegExp(r'^07[789]\d{7}$');
 
   @override
@@ -186,10 +196,10 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
         title: Text(
           'Booking Field: ${widget.field['fieldName']}',
           style: TextStyle(
-            color: Colors.white, // Set the text color to white
+            color: Colors.white,
           ),
         ),
-        backgroundColor: Colors.green, // Set the background color to green
+        backgroundColor: Colors.green,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -239,8 +249,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                         child: Text(timeString),
                       );
                     }).toList(),
-                    menuMaxHeight:
-                        200, // Set the maximum height of the dropdown menu
+                    menuMaxHeight: 200,
                     isDense: true,
                   ),
                 ),
@@ -249,6 +258,21 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
               ],
             ),
             SizedBox(height: 16),
+            TextField(
+              controller: _descriptionController,
+              maxLines: null,
+              maxLength: 200,
+              onChanged: (value) {
+                _updateRemainingWords(value);
+              },
+              decoration: InputDecoration(
+                labelText: 'Description',
+                hintText: 'Enter your match description here...',
+                counterText: '$_remainingWords words remaining',
+                border: OutlineInputBorder(),
+              ),
+            ),
+
             Text('Select Duration:'),
             _buildDurationRadioButton(DurationSelection.oneHour, '1 Hour', 1),
             _buildDurationRadioButton(
@@ -283,6 +307,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                   userPhone = userSnapshot.get('phone');
                 }
 
+                String description = _descriptionController.text;
                 // Create a new match document in the matches collection
                 FirebaseFirestore.instance
                     .collection('fields/${widget.field.id}/matches')
@@ -302,6 +327,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                   'matchSportType': widget.field['fieldSports'].toString(),
                   'matchHeldAt': widget.field['fieldName'],
                   'matchLocation': widget.field['location'],
+                  'matchDescription': description,
                 }).then((value) {
                   showDialog(
                     context: context,

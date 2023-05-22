@@ -142,6 +142,21 @@ class PlayerJoinMatchPage extends StatelessWidget {
                     '${match['matchServices']}',
                     style: TextStyle(fontSize: 18),
                   ),
+                  Divider(
+                    thickness: 2,
+                    color: Colors.black,
+                  ),
+                  Text(
+                    'Match Description:',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '${match['matchDescription']}',
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ],
               ),
             ),
