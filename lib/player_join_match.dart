@@ -203,15 +203,11 @@ class PlayerJoinMatchPage extends StatelessWidget {
                     color: Colors.black,
                   ),
                   Text(
-                    'Joined Players:',
+                    'Joined Players: (${match['playersJoined'].length})',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
-                  ),
-                  Text(
-                    '${match['playersJoined'].length}',
-                    style: TextStyle(fontSize: 18),
                   ),
                   Text(
                     '${match['playersJoined'].join(", ")}',
