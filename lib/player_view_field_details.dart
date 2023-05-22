@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'player_book_match.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PlayerViewFieldDetials extends StatefulWidget {
   final DocumentSnapshot field;
@@ -166,12 +167,32 @@ class _PlayerViewFieldDetialsState extends State<PlayerViewFieldDetials> {
                   ),
                   Row(
                     children: [
-                      IconButton(
-                        icon: Icon(Icons.phone),
-                        onPressed: () {
-                          String phoneNumber = widget.field['fieldOwnerNumber'];
-                          launch('tel:$phoneNumber');
-                        },
+                      Container(
+                        width: 36, // Adjust the width as needed
+                        child: IconButton(
+                          icon: Icon(Icons.phone),
+                          color: Colors.green,
+                          onPressed: () {
+                            String phoneNumber =
+                                widget.field['fieldOwnerNumber'];
+                            launch('tel:$phoneNumber');
+                          },
+                        ),
+                      ),
+                      Container(
+                        width: 36, // Adjust the width as needed
+                        child: IconButton(
+                          icon: FaIcon(
+                            FontAwesomeIcons.whatsapp,
+                            size: 24,
+                            color: Colors.green,
+                          ),
+                          onPressed: () {
+                            String phoneNumber =
+                                '+962' + widget.field['fieldOwnerNumber'];
+                            launch('https://wa.me/$phoneNumber');
+                          },
+                        ),
                       ),
                       Text(
                         '${widget.field['fieldOwnerNumber']}',
