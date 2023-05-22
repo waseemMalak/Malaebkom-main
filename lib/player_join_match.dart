@@ -1,12 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:malaebkom/my_drawer_header_owner.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PlayerJoinMatchPage extends StatelessWidget {
   final QueryDocumentSnapshot<Map<String, dynamic>> match;
 
   PlayerJoinMatchPage({required this.match});
+
+  void joinMatch(QueryDocumentSnapshot<Map<String, dynamic>> match) async {
+    String? userId = FirebaseAuth.instance.currentUser?.uid;
+    String? userName;
+    String? userPhone;
+
+    // Retrieve the userName from the "users" collection
+    DocumentSnapshot userSnapshot =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+    if (userSnapshot.exists) {
+      userName = userSnapshot.get('userName');
+      userPhone = userSnapshot.get('phone');
+    }
+
+    print('userId: $userId');
+    print('userName: $userName');
+    print('userPhone: $userPhone');
+    print(match['playersJoined']);
+
+    // Get the current list of joined players (if any)
+    dynamic playersJoined = match['playersJoined'];
+    List<dynamic> joinedPlayers =
+        playersJoined is List ? List.from(playersJoined) : [];
+
+    print('joinedPlayers: $joinedPlayers');
+
+    // Check if the user ID is already in the joined players list
+    if (!joinedPlayers.contains(userName)) {
+      // Add the new player's ID to the list
+      joinedPlayers.add(userName);
+
+      // Update the 'playersJoined' field in the match document
+      await match.reference.update({'playersJoined': joinedPlayers});
+    }
+
+    // Perform any additional actions after joining the match
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,6 +198,25 @@ class PlayerJoinMatchPage extends StatelessWidget {
                     '${match['matchDescription']}',
                     style: TextStyle(fontSize: 18),
                   ),
+                  Divider(
+                    thickness: 2,
+                    color: Colors.black,
+                  ),
+                  Text(
+                    'Joined Players:',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '${match['playersJoined'].length}',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  Text(
+                    '${match['playersJoined'].join(", ")}',
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ],
               ),
             ),
@@ -203,7 +263,7 @@ class PlayerJoinMatchPage extends StatelessWidget {
                       TextButton(
                         child: Text('Join'),
                         onPressed: () {
-                          // Perform the join match action
+                          joinMatch(match);
                           Navigator.of(context).pop();
                         },
                       ),
