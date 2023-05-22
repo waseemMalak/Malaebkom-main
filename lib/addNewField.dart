@@ -699,9 +699,12 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
       String userId = FirebaseAuth.instance.currentUser!.uid;
       DocumentReference fieldRef =
           FirebaseFirestore.instance.collection('fields').doc();
-      //choose oneVv
-      // List<String> imageUrls = await _uploadImagesToStorage(fieldRef.id);
-      // List<String> imageUrls = await _pickedImages();
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      String phoneNumber = userSnapshot['phone'];
+
       List<String> imageUrls = await _uploadImages(_fieldImages);
 
       await FirebaseFirestore.instance.collection('fields').add({
@@ -717,6 +720,7 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
         'openingHours':
             '${_formatTimeOfDay(_openingHoursStart)} - ${_formatTimeOfDay(_openingHoursEnd)}',
         'userId': userId,
+        'fieldOwnerNumber': phoneNumber,
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Field added successfully')),

@@ -289,7 +289,8 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                     .add({
                   'matchDate': DateFormat('dd MMM yyyy').format(selectedDate),
                   'fieldId': widget.field.id,
-                  'userId': userId,
+                  'fieldOwnerId': widget.field['userId'],
+                  'matchCreatorId': userId,
                   'matchCreator': userName,
                   'matchCreatorNumber': userPhone,
                   'price': price,

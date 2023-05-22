@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PlayerJoinMatchPage extends StatelessWidget {
   final QueryDocumentSnapshot<Map<String, dynamic>> match;
@@ -20,7 +21,7 @@ class PlayerJoinMatchPage extends StatelessWidget {
           Image.network(
             match['fieldImage'][0],
             fit: BoxFit.cover,
-            height: 200,
+            height: 180,
             width: double.infinity,
           ),
           SizedBox(height: 16),
@@ -84,9 +85,46 @@ class PlayerJoinMatchPage extends StatelessWidget {
                     style: TextStyle(fontSize: 18),
                   ),
                   SizedBox(height: 4),
-                  Text(
-                    'Phone Number: ${match['matchCreatorNumber']}',
-                    style: TextStyle(fontSize: 18),
+                  Row(
+                    children: [
+                      Text(
+                        'Phone Number: ',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      Container(
+                        width: 30, // Adjust the width as needed
+                        child: IconButton(
+                          icon: Icon(Icons.phone),
+                          color: Colors.green,
+                          onPressed: () {
+                            String phoneNumber = match['matchCreatorNumber'];
+                            launch('tel:$phoneNumber');
+                          },
+                        ),
+                      ),
+                      Container(
+                        width: 30, // Adjust the width as needed
+                        child: IconButton(
+                          icon: FaIcon(
+                            FontAwesomeIcons.whatsapp,
+                            size: 24,
+                            color: Colors.green,
+                          ),
+                          onPressed: () {
+                            String phoneNumber =
+                                '+962' + match['matchCreatorNumber'];
+                            launch('https://wa.me/$phoneNumber');
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        '${match['matchCreatorNumber']}',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ],
                   ),
                   Divider(
                     thickness: 2,

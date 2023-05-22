@@ -89,7 +89,7 @@ class _PlayerViewFieldDetialsState extends State<PlayerViewFieldDetials> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: MediaQuery.of(context).size.width * 9 / 16,
+              height: MediaQuery.of(context).size.width * 8 / 16,
               child: Stack(
                 children: [
                   CarouselSlider(
@@ -102,7 +102,7 @@ class _PlayerViewFieldDetialsState extends State<PlayerViewFieldDetials> {
                       );
                     }).toList(),
                     options: CarouselOptions(
-                      aspectRatio: 16 / 9,
+                      aspectRatio: 16 / 8,
                       viewportFraction: 1.0,
                       initialPage: 0,
                       enableInfiniteScroll: false,
@@ -156,6 +156,34 @@ class _PlayerViewFieldDetialsState extends State<PlayerViewFieldDetials> {
                     'Field Name: ${widget.field['fieldName']}',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
+                  Divider(
+                    color: Colors.black,
+                    thickness: 1.0,
+                  ),
+                  Text(
+                    'Field Owner Contact Number:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.phone),
+                        onPressed: () {
+                          String phoneNumber = widget.field['fieldOwnerNumber'];
+                          launch('tel:$phoneNumber');
+                        },
+                      ),
+                      Text(
+                        '${widget.field['fieldOwnerNumber']}',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  Divider(
+                    color: Colors.black,
+                    thickness: 1.0,
+                  ),
                   SizedBox(height: 8),
                   Text(
                     'Price Per Hour: ${widget.field['price'].toString()} JD',
@@ -188,7 +216,7 @@ class _PlayerViewFieldDetialsState extends State<PlayerViewFieldDetials> {
                     direction: Axis.horizontal,
                     allowHalfRating: false,
                     itemCount: 5,
-                    itemSize: 20.0, // Adjusted itemSize value
+                    itemSize: 20.0,
                     unratedColor: Colors.grey[300],
                     itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
                     itemBuilder: (context, _) => Icon(
