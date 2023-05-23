@@ -114,9 +114,11 @@ class _PlayerReservationsState extends State<PlayerReservations> {
                           final duration = match['duration'];
                           final startingHour = match['startingHour'];
                           final matchDate = match['matchDate'];
+                          final players = match['playersJoined'];
 
                           return ListTile(
-                            title: Text('Reservation at: $matchDate'),
+                            title: Text(
+                                'Reservation at: $matchDate at $startingHour'),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -128,8 +130,7 @@ class _PlayerReservationsState extends State<PlayerReservations> {
                                 Text('Match Held At: $matchHeldAt'),
                                 Text('Price: $price JOD'),
                                 Text('Duration: $duration'),
-                                Text('Starting Hour: $startingHour'),
-                                Text('Match Date: $matchDate'),
+                                Text('Players: $players'),
                               ],
                             ),
                           );
@@ -237,5 +238,3 @@ enum DrawerSections {
   viewFields,
   viewMatches,
 }
-
-// The rest of your code for other pages and navigation
