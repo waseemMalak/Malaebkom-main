@@ -4,6 +4,8 @@ import 'package:malaebkom/player.dart';
 import 'package:malaebkom/player_profile.dart';
 import 'login.dart';
 import 'my_drawer_header_owner.dart';
+import 'player_view_fields.dart';
+import 'player_view_matches.dart';
 
 class PlayerReservations extends StatefulWidget {
   const PlayerReservations({super.key});
@@ -70,6 +72,10 @@ class _PlayerReservationsState extends State<PlayerReservations> {
                 currentPage == DrawerSections.profile ? true : false),
             menuItem(3, "Reservations", Icons.calendar_today,
                 currentPage == DrawerSections.reservations ? true : false),
+            menuItem(4, "Fields", Icons.stadium,
+                currentPage == DrawerSections.viewFields ? true : false),
+            menuItem(5, "Matches", Icons.sports_score_sharp,
+                currentPage == DrawerSections.viewMatches ? true : false),
           ],
         ));
   }
@@ -88,6 +94,12 @@ class _PlayerReservationsState extends State<PlayerReservations> {
                   profilePage(context);
                 } else if (id == 3) {
                   currentPage = DrawerSections.reservations;
+                } else if (id == 4) {
+                  currentPage = DrawerSections.viewFields;
+                  viewFieldsPage(context);
+                } else if (id == 5) {
+                  currentPage = DrawerSections.viewMatches;
+                  viewMatchesPage(context);
                 }
               });
             },
@@ -119,6 +131,8 @@ enum DrawerSections {
   home,
   profile,
   reservations,
+  viewFields,
+  viewMatches,
 }
 
 Future<void> HomePage(BuildContext context) async {
@@ -137,6 +151,26 @@ Future<void> profilePage(BuildContext context) async {
     context,
     MaterialPageRoute(
       builder: (context) => PlayerProfile(),
+    ),
+  );
+}
+
+Future<void> viewFieldsPage(BuildContext context) async {
+  CircularProgressIndicator();
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PlayerViewField(),
+    ),
+  );
+}
+
+Future<void> viewMatchesPage(BuildContext context) async {
+  CircularProgressIndicator();
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PlayerViewMatches(),
     ),
   );
 }

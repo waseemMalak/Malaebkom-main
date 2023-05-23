@@ -249,6 +249,8 @@ class _PlayerState extends State<Player> {
                 currentPage == DrawerSections.reservations ? true : false),
             menuItem(4, "Fields", Icons.stadium,
                 currentPage == DrawerSections.viewFields ? true : false),
+            menuItem(5, "Matches", Icons.sports_score_sharp,
+                currentPage == DrawerSections.viewMatches ? true : false),
           ],
         ));
   }
@@ -270,6 +272,9 @@ class _PlayerState extends State<Player> {
                 } else if (id == 4) {
                   currentPage = DrawerSections.viewFields;
                   viewFieldsPage(context);
+                } else if (id == 5) {
+                  currentPage = DrawerSections.viewMatches;
+                  viewMatchesPage(context);
                 }
               });
             },
@@ -303,6 +308,7 @@ enum DrawerSections {
   profile,
   reservations,
   viewFields,
+  viewMatches,
 }
 
 Future<void> reservationPage(BuildContext context) async {
@@ -331,6 +337,16 @@ Future<void> viewFieldsPage(BuildContext context) async {
     context,
     MaterialPageRoute(
       builder: (context) => PlayerViewField(),
+    ),
+  );
+}
+
+Future<void> viewMatchesPage(BuildContext context) async {
+  CircularProgressIndicator();
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PlayerViewMatches(),
     ),
   );
 }

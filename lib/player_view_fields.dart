@@ -8,6 +8,7 @@ import 'player.dart';
 import 'player_view_field_details.dart';
 import 'login.dart';
 import 'my_drawer_header_owner.dart';
+import 'player_view_matches.dart';
 import 'owner_Reservations.dart';
 
 class PlayerViewField extends StatefulWidget {
@@ -260,6 +261,8 @@ class _PlayerViewFieldState extends State<PlayerViewField> {
                 currentPage == DrawerSections.reservations ? true : false),
             menuItem(4, "Fields", Icons.stadium,
                 currentPage == DrawerSections.viewFields ? true : false),
+            menuItem(5, "Matches", Icons.sports_score_sharp,
+                currentPage == DrawerSections.viewMatches ? true : false),
           ],
         ));
   }
@@ -282,6 +285,9 @@ class _PlayerViewFieldState extends State<PlayerViewField> {
                 } else if (id == 4) {
                   currentPage = DrawerSections.viewFields;
                   viewFieldsPage(context);
+                } else if (id == 5) {
+                  currentPage = DrawerSections.viewMatches;
+                  viewMatchesPage(context);
                 }
               });
             },
@@ -315,6 +321,7 @@ enum DrawerSections {
   profile,
   reservations,
   viewFields,
+  viewMatches,
 }
 
 Future<void> HomePage(BuildContext context) async {
@@ -353,6 +360,16 @@ Future<void> viewFieldsPage(BuildContext context) async {
     context,
     MaterialPageRoute(
       builder: (context) => PlayerViewField(),
+    ),
+  );
+}
+
+Future<void> viewMatchesPage(BuildContext context) async {
+  CircularProgressIndicator();
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PlayerViewMatches(),
     ),
   );
 }

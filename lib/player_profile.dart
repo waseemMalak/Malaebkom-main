@@ -6,6 +6,8 @@ import 'package:malaebkom/player_reservations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login.dart';
 import 'my_drawer_header_owner.dart';
+import 'player_view_fields.dart';
+import 'player_view_matches.dart';
 import 'owner_Reservations.dart';
 
 class EditProfileDialog extends StatefulWidget {
@@ -345,6 +347,10 @@ class _PlayerProfileState extends State<PlayerProfile> {
                 currentPage == DrawerSections.profile ? true : false),
             menuItem(3, "Reservations", Icons.calendar_today,
                 currentPage == DrawerSections.reservations ? true : false),
+            menuItem(4, "Fields", Icons.stadium,
+                currentPage == DrawerSections.viewFields ? true : false),
+            menuItem(5, "Matches", Icons.sports_score_sharp,
+                currentPage == DrawerSections.viewMatches ? true : false),
           ],
         ));
   }
@@ -363,6 +369,12 @@ class _PlayerProfileState extends State<PlayerProfile> {
                 } else if (id == 3) {
                   currentPage = DrawerSections.reservations;
                   reservationPage(context);
+                } else if (id == 4) {
+                  currentPage = DrawerSections.viewFields;
+                  viewFieldsPage(context);
+                } else if (id == 5) {
+                  currentPage = DrawerSections.viewMatches;
+                  viewMatchesPage(context);
                 }
               });
             },
@@ -395,6 +407,8 @@ enum DrawerSections {
   home,
   profile,
   reservations,
+  viewFields,
+  viewMatches,
 }
 
 Future<void> reservationPage(BuildContext context) async {
@@ -486,4 +500,24 @@ Future<String?> getCurrentphone() async {
   }
 
   return uName;
+}
+
+Future<void> viewFieldsPage(BuildContext context) async {
+  CircularProgressIndicator();
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PlayerViewField(),
+    ),
+  );
+}
+
+Future<void> viewMatchesPage(BuildContext context) async {
+  CircularProgressIndicator();
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PlayerViewMatches(),
+    ),
+  );
 }

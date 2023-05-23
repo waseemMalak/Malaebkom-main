@@ -306,6 +306,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                   userName = userSnapshot.get('userName');
                   userPhone = userSnapshot.get('phone');
                 }
+                List<String?> playersJoined = [userName];
 
                 String description = _descriptionController.text;
                 // Create a new match document in the matches collection
@@ -328,6 +329,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                   'matchHeldAt': widget.field['fieldName'],
                   'matchLocation': widget.field['location'],
                   'matchDescription': description,
+                  'playersJoined': playersJoined,
                 }).then((value) {
                   showDialog(
                     context: context,

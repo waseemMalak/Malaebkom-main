@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:malaebkom/my_drawer_header_owner.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'player.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -203,14 +204,14 @@ class PlayerJoinMatchPage extends StatelessWidget {
                     color: Colors.black,
                   ),
                   Text(
-                    'Joined Players: (${match['playersJoined'].length})',
+                    'Joined Players: (${match['playersJoined']?.length ?? 0})',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    '${match['playersJoined'].join(", ")}',
+                    '${match['playersJoined']?.join(", ") ?? ""}',
                     style: TextStyle(fontSize: 18),
                   ),
                 ],
@@ -260,7 +261,29 @@ class PlayerJoinMatchPage extends StatelessWidget {
                         child: Text('Join'),
                         onPressed: () {
                           joinMatch(match);
-                          Navigator.of(context).pop();
+
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Join Successful'),
+                              content: Text(
+                                  'You have successfully joined the match.'),
+                              actions: [
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .pop(); // Close the dialog
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Player()),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
                         },
                       ),
                     ],
