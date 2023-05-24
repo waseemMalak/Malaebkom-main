@@ -30,7 +30,7 @@ enum MatchType {
 }
 
 class _PlayerBookMatchState extends State<PlayerBookMatch> {
-  int _remainingWords = 200;
+  int _remainingWords = 100;
 
   void _updateRemainingWords(String value) {
     setState(() {
@@ -90,6 +90,20 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
       return currentTimeValue >= startTimeValue ||
           currentTimeValue <= endTimeValue;
     }
+  }
+
+  Future<bool> isMatchAlreadyBooked(
+      DateTime matchDate, TimeOfDay startingTime, String fieldId) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('fields')
+        .doc(fieldId)
+        .collection('matches')
+        .where('matchDate',
+            isEqualTo: DateFormat('dd MMM yyyy').format(matchDate))
+        .where('startingHour', isEqualTo: startingTime.format(context))
+        .get();
+
+    return querySnapshot.docs.isNotEmpty;
   }
 
   void _selectTime(TimeOfDay? selected) {
@@ -296,6 +310,30 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                 String? userName;
                 String? userPhone;
 
+                bool matchAlreadyBooked = await isMatchAlreadyBooked(
+                    selectedDate, selectedTime, widget.field.id);
+
+                if (matchAlreadyBooked) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Error'),
+                        content: Text(
+                            'A match is already booked at the selected date and time.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  return;
+                }
                 // Retrieve the userName from the "users" collection
                 DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
                     .collection('users')
