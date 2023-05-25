@@ -5,6 +5,7 @@ import 'login.dart';
 import 'my_drawer_header_owner.dart';
 import 'player_view_fields.dart';
 import 'player_view_matches.dart';
+import 'package:intl/intl.dart';
 
 class PlayerReservations extends StatefulWidget {
   const PlayerReservations({Key? key}) : super(key: key);
@@ -94,12 +95,7 @@ class _PlayerReservationsState extends State<PlayerReservations> {
                   return Column(
                     children: [
                       Divider(
-                        color: Colors.grey,
-                        height: 1,
-                        thickness: 1,
-                      ),
-                      Divider(
-                        color: Colors.grey,
+                        color: Colors.black,
                         height: 1,
                         thickness: 1,
                       ),
@@ -116,23 +112,84 @@ class _PlayerReservationsState extends State<PlayerReservations> {
                           final matchDate = match['matchDate'];
                           final players = match['playersJoined'];
 
-                          return ListTile(
-                            title: Text(
-                                'Reservation at: $matchDate at $startingHour'),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Divider(
-                                  color: Colors.black,
-                                  height: 1,
-                                  thickness: 1,
+                          // Convert matchDate and startingHour to DateTime objects
+                          final matchDateTime =
+                              DateFormat('dd MMM yyyy').parse(matchDate);
+                          final startingDateTime =
+                              DateFormat('HH:mm').parse(startingHour);
+
+                          // Calculate the current time
+                          final now = DateTime.now();
+
+                          // Calculate the difference between the current time and matchDateTime
+                          final difference = matchDateTime.difference(now);
+
+                          // Check if the difference is 24 hours or more
+                          final isCancellable = difference.inHours >= 24;
+
+                          return Stack(
+                            children: [
+                              ListTile(
+                                title: Text(
+                                    'Reservation at: $matchDate at $startingHour'),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Divider(
+                                      color: Colors.black,
+                                      height: 1,
+                                      thickness: 1,
+                                    ),
+                                    Text('Match Held At: $matchHeldAt'),
+                                    Text('Price: $price JOD'),
+                                    Text('Duration: $duration'),
+                                    Text('Players: $players'),
+                                  ],
                                 ),
-                                Text('Match Held At: $matchHeldAt'),
-                                Text('Price: $price JOD'),
-                                Text('Duration: $duration'),
-                                Text('Players: $players'),
-                              ],
-                            ),
+                              ),
+                              if (isCancellable) // Only show the button if it's cancellable
+                                Positioned(
+                                  bottom: 1.0,
+                                  right: 8.0,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text('Cancel Reservation'),
+                                            content: Text(
+                                                'Are you sure you want to cancel this reservation?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text('No'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  if (match.reference != null) {
+                                                    match.reference.delete();
+                                                  }
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text('Yes'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Text('Cancel Reservation'),
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Colors.red,
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 8.0),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           );
                         },
                       ),
