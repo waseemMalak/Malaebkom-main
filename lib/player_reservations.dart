@@ -108,24 +108,56 @@ class _PlayerReservationsState extends State<PlayerReservations> {
                           final matchHeldAt = match['matchHeldAt'];
                           final price = match['price'];
                           final duration = match['duration'];
-                          final startingHour = match['startingHour'];
+
                           final matchDate = match['matchDate'];
                           final players = match['playersJoined'];
+                          final startingHour = match['startingHour'];
 
-                          // Convert matchDate and startingHour to DateTime objects
+                          DateTime startingDateTime;
+                          try {
+                            // Parse the starting hour from the stored format
+                            startingDateTime =
+                                DateFormat('hh:mm a').parse(startingHour);
+                          } catch (e) {
+                            // Handle parsing error
+                            print('Error parsing starting hour: $e');
+                            // You can set a default value or handle the error in an appropriate way
+                            startingDateTime = DateTime.now();
+                          }
+
+// Create a DateTime object for the match date
                           final matchDateTime =
                               DateFormat('dd MMM yyyy').parse(matchDate);
-                          final startingDateTime =
-                              DateFormat('HH:mm').parse(startingHour);
 
-                          // Calculate the current time
+// Set the date portion of startingDateTime to matchDateTime
+                          startingDateTime = DateTime(
+                            matchDateTime.year,
+                            matchDateTime.month,
+                            matchDateTime.day,
+                            startingDateTime.hour,
+                            startingDateTime.minute,
+                            startingDateTime.second,
+                            startingDateTime.millisecond,
+                            startingDateTime.microsecond,
+                          );
+
+// Calculate the current time
                           final now = DateTime.now();
 
-                          // Calculate the difference between the current time and matchDateTime
-                          final difference = matchDateTime.difference(now);
+                          print('Match DateTime: $matchDateTime');
+                          print('Starting DateTime: $startingDateTime');
+                          print('Current DateTime: $now');
 
-                          // Check if the difference is 24 hours or more
-                          final isCancellable = difference.inHours >= 24;
+// Calculate the difference in hours between the current time and startingDateTime
+                          final differenceInHours =
+                              startingDateTime.difference(now).inHours;
+
+                          print('Difference in Hours: $differenceInHours');
+
+// Check if the difference is 2 hours or more
+                          final isCancellable = differenceInHours >= 2;
+
+                          print('Is Cancellable: $isCancellable');
 
                           return Stack(
                             children: [
@@ -144,6 +176,14 @@ class _PlayerReservationsState extends State<PlayerReservations> {
                                     Text('Price: $price JOD'),
                                     Text('Duration: $duration'),
                                     Text('Players: $players'),
+                                    SizedBox(
+                                      height: 2,
+                                    ),
+                                    Divider(
+                                      color: Colors.grey,
+                                      height: 1,
+                                      thickness: 2,
+                                    ),
                                   ],
                                 ),
                               ),
