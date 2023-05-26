@@ -38,8 +38,12 @@ class _RegisterState extends State<Register> {
   var role = "Player";
 
   File? _userImageFile;
-  void _pickedImage(File image) {
-    _userImageFile = image;
+  void _pickedImage(File? image) {
+    if (image != null) {
+      _userImageFile = image;
+    } else {
+      _userImageFile = File('assets/images/def.jpg');
+    }
   }
 
   @override
@@ -383,13 +387,7 @@ class _RegisterState extends State<Register> {
   void signUp(String name, String phone, String email, String password,
       File image, String role) async {
     CircularProgressIndicator();
-    if (_userImageFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(" please upload an image"),
-        backgroundColor: Theme.of(context).colorScheme.error,
-      ));
-      return;
-    }
+
     if (_formkey.currentState!.validate()) {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
@@ -402,21 +400,28 @@ class _RegisterState extends State<Register> {
       String name, String phone, String email, String role) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     var user = _auth.currentUser;
-    final imageref = FirebaseStorage.instance
-        .ref()
-        .child('user_image')
-        .child(user!.uid + '.jpg');
-    await imageref.putFile(_userImageFile as File);
-    final url = await imageref.getDownloadURL();
+    String imageUrl;
+
+    if (_userImageFile != null) {
+      final imageref = FirebaseStorage.instance
+          .ref()
+          .child('user_image')
+          .child(user!.uid + '.jpg');
+      await imageref.putFile(_userImageFile!);
+      imageUrl = await imageref.getDownloadURL();
+    } else {
+      imageUrl = 'assets/images/def.jpg'; // Default image path
+    }
 
     CollectionReference ref = FirebaseFirestore.instance.collection('users');
-    ref.doc(user.uid).set({
+    ref.doc(user?.uid).set({
       'userName': nameController.text,
       'phone': mobile.text,
       'email': emailController.text,
-      'image_url': url,
+      'image_url': imageUrl,
       'role': role,
     });
+
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginPage()));
   }

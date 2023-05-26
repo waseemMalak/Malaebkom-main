@@ -12,6 +12,29 @@ class MyHeaderDrawer extends StatefulWidget {
 }
 
 class _MyHeaderDrawerState extends State<MyHeaderDrawer> {
+  String? imageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserImage();
+  }
+
+  Future<void> fetchUserImage() async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> ds = await FirebaseFirestore
+          .instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      setState(() {
+        imageUrl = ds.get('image_url');
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,10 +49,13 @@ class _MyHeaderDrawerState extends State<MyHeaderDrawer> {
             margin: EdgeInsets.only(bottom: 10),
             height: 70,
             decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: AssetImage('assets/images/def.jpg'),
-                )),
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: imageUrl != null && imageUrl != 'assets/images/def.jpg'
+                    ? NetworkImage(imageUrl!) as ImageProvider<Object>
+                    : AssetImage('assets/images/def.jpg'),
+              ),
+            ),
           ),
           Container(
             child: FutureBuilder<String?>(
