@@ -514,24 +514,28 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                         ),
                         Container(
                           height: 120, // Set a fixed height for the listview
-                          child: ListView.builder(
-                            itemCount: _services.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              final service = _services[index];
-                              return CheckboxListTile(
-                                title: Text(service),
-                                value: _selectedServices.contains(service),
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    if (value!) {
-                                      _selectedServices.add(service);
-                                    } else {
-                                      _selectedServices.remove(service);
-                                    }
-                                  });
-                                },
-                              );
-                            },
+                          color: Colors.grey[200],
+                          child: Scrollbar(
+                            isAlwaysShown: true,
+                            child: ListView.builder(
+                              itemCount: _services.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final service = _services[index];
+                                return CheckboxListTile(
+                                  title: Text(service),
+                                  value: _selectedServices.contains(service),
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      if (value!) {
+                                        _selectedServices.add(service);
+                                      } else {
+                                        _selectedServices.remove(service);
+                                      }
+                                    });
+                                  },
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ],
@@ -566,24 +570,29 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                         ),
                         Container(
                           height: 120, // Set a fixed height for the list view
-                          child: ListView.builder(
-                            itemCount: _sportsType.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              final sportType = _sportsType[index];
-                              return CheckboxListTile(
-                                title: Text(sportType),
-                                value: _selectedSportsType.contains(sportType),
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    if (value!) {
-                                      _selectedSportsType.add(sportType);
-                                    } else {
-                                      _selectedSportsType.remove(sportType);
-                                    }
-                                  });
-                                },
-                              );
-                            },
+                          color: Colors.grey[200],
+                          child: Scrollbar(
+                            isAlwaysShown: true,
+                            child: ListView.builder(
+                              itemCount: _sportsType.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final sportType = _sportsType[index];
+                                return CheckboxListTile(
+                                  title: Text(sportType),
+                                  value:
+                                      _selectedSportsType.contains(sportType),
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      if (value!) {
+                                        _selectedSportsType.add(sportType);
+                                      } else {
+                                        _selectedSportsType.remove(sportType);
+                                      }
+                                    });
+                                  },
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ],

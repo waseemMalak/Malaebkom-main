@@ -181,37 +181,20 @@ class _FieldDetailsState extends State<FieldDetails> {
                   },
                 ),
                 SizedBox(height: 16.0),
-                TextFormField(
-                  controller: _imagePathController,
-                  decoration: InputDecoration(
-                    labelText: 'Image Path',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter an image path';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.0),
                 // TextFormField(
-                //   controller: _priceController,
+                //   controller: _imagePathController,
                 //   decoration: InputDecoration(
-                //     labelText: 'Price',
+                //     labelText: 'Image Path',
                 //     border: OutlineInputBorder(),
                 //   ),
-                //   keyboardType: TextInputType.number,
                 //   validator: (value) {
                 //     if (value == null || value.isEmpty) {
-                //       return 'Please enter a price';
-                //     }
-                //     if (double.tryParse(value) == null) {
-                //       return 'Please enter a valid number';
+                //       return 'Please enter an image path';
                 //     }
                 //     return null;
                 //   },
                 // ),
+
                 FormField(
                   builder: (FormFieldState<String> state) {
                     return TextFormField(
@@ -295,25 +278,29 @@ class _FieldDetailsState extends State<FieldDetails> {
                         height: 8,
                       ),
                       Container(
+                        color: Colors.grey[200],
                         height: 120, // Set a fixed height for the list view
-                        child: ListView.builder(
-                          itemCount: _services.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final service = _services[index];
-                            return CheckboxListTile(
-                              title: Text(service),
-                              value: _selectedServices.contains(service),
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  if (value!) {
-                                    _selectedServices.add(service);
-                                  } else {
-                                    _selectedServices.remove(service);
-                                  }
-                                });
-                              },
-                            );
-                          },
+                        child: Scrollbar(
+                          isAlwaysShown: true,
+                          child: ListView.builder(
+                            itemCount: _services.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final service = _services[index];
+                              return CheckboxListTile(
+                                title: Text(service),
+                                value: _selectedServices.contains(service),
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    if (value!) {
+                                      _selectedServices.add(service);
+                                    } else {
+                                      _selectedServices.remove(service);
+                                    }
+                                  });
+                                },
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],
@@ -349,24 +336,28 @@ class _FieldDetailsState extends State<FieldDetails> {
                       ),
                       Container(
                         height: 120, // Set a fixed height for the list view
-                        child: ListView.builder(
-                          itemCount: _sportsType.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final sportType = _sportsType[index];
-                            return CheckboxListTile(
-                              title: Text(sportType),
-                              value: _selectedSportsType.contains(sportType),
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  if (value!) {
-                                    _selectedSportsType.add(sportType);
-                                  } else {
-                                    _selectedSportsType.remove(sportType);
-                                  }
-                                });
-                              },
-                            );
-                          },
+                        color: Colors.grey[200],
+                        child: Scrollbar(
+                          isAlwaysShown: true,
+                          child: ListView.builder(
+                            itemCount: _sportsType.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final sportType = _sportsType[index];
+                              return CheckboxListTile(
+                                title: Text(sportType),
+                                value: _selectedSportsType.contains(sportType),
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    if (value!) {
+                                      _selectedSportsType.add(sportType);
+                                    } else {
+                                      _selectedSportsType.remove(sportType);
+                                    }
+                                  });
+                                },
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],
