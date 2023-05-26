@@ -154,7 +154,6 @@ class _PlayerReservationsState extends State<PlayerReservations> {
 
                           print('Difference in Hours: $differenceInHours');
 
-// Check if the difference is 2 hours or more
                           final isCancellable = differenceInHours >= 2;
 
                           print('Is Cancellable: $isCancellable');
