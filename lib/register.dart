@@ -140,9 +140,19 @@ class _RegisterState extends State<Register> {
                             ),
                           ),
                           validator: (value) {
-                            if (value!.length == 0) {
+                            if (value!.isEmpty) {
                               return "Phone Number cannot be empty";
                             }
+
+                            // Regular expression pattern for validating Jordanian phone numbers
+                            final RegExp phoneRegex =
+                                RegExp(r'^\+?9627[789]\d{7}$');
+
+                            if (!phoneRegex.hasMatch(value)) {
+                              return "Please enter a valid Jordanian phone number start with +962";
+                            }
+
+                            return null;
                           },
                           onChanged: (value) {},
                           keyboardType: TextInputType.phone,
@@ -203,29 +213,40 @@ class _RegisterState extends State<Register> {
                               borderRadius: new BorderRadius.circular(15),
                             ),
                             suffixIcon: IconButton(
-                                icon: Icon(_isObscure
-                                    ? Icons.visibility_off
-                                    : Icons.visibility),
-                                onPressed: () {
-                                  setState(() {
-                                    _isObscure = !_isObscure;
-                                  });
-                                }),
+                              icon: Icon(_isObscure
+                                  ? Icons.visibility_off
+                                  : Icons.visibility),
+                              onPressed: () {
+                                setState(() {
+                                  _isObscure = !_isObscure;
+                                });
+                              },
+                            ),
                             filled: true,
                             fillColor: Colors.white,
                             hintText: 'Password',
                             enabled: true,
                           ),
                           validator: (value) {
-                            RegExp regex = new RegExp(r'^.{6,}$');
                             if (value!.isEmpty) {
                               return "Password cannot be empty";
                             }
-                            if (!regex.hasMatch(value)) {
-                              return ("please enter valid password min. 6 character");
-                            } else {
-                              return null;
+
+                            if (value.length < 6) {
+                              return "Password should be at least 6 characters long";
                             }
+
+                            final RegExp uppercaseRegex =
+                                RegExp(r'^(?=.*[A-Z])');
+                            final RegExp specialCharacterRegex =
+                                RegExp(r'^(?=.*?[#?!@$%^&*-])');
+
+                            if (!uppercaseRegex.hasMatch(value) ||
+                                !specialCharacterRegex.hasMatch(value)) {
+                              return "Password should contain at least one uppercase letter and one special character";
+                            }
+
+                            return null;
                           },
                           onChanged: (value) {},
                         ),
