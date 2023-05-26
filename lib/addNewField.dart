@@ -225,6 +225,7 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
   }
 
   final List<String> _services = [
+    'None',
     'Football',
     'Basketball',
     'Tennis ball',
@@ -404,7 +405,7 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value!.isEmpty || value == "0") {
                         return 'Please enter a price';
                       }
                       return null;
