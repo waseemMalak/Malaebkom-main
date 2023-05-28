@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,6 +17,8 @@ class _CreateClubPageState extends State<CreateClubPage> {
   List<String> _clubSportsType = [];
   List<String> _clubMembers = [];
   List<String> _clubMembersID = [];
+  final TextEditingController _clubCreatorPhoneController =
+      TextEditingController();
 
   Future<void> _uploadClubLogo() async {
     final picker = ImagePicker();
@@ -25,8 +26,7 @@ class _CreateClubPageState extends State<CreateClubPage> {
 
     if (pickedFile != null) {
       final file = File(pickedFile.path);
-      final fileName =
-          '${DateTime.now().millisecondsSinceEpoch}.jpg'; // Generate a unique filename
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
       final storageReference =
           firebase_storage.FirebaseStorage.instance.ref().child(fileName);
       await storageReference.putFile(file);
@@ -39,36 +39,57 @@ class _CreateClubPageState extends State<CreateClubPage> {
 
   void _createClub() async {
     if (_clubLogo == null) {
-      // Show validation error message using a Snackbar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Colors.red, // Set the background color to red
+          backgroundColor: Colors.red,
           content: Text('Club logo is required.'),
         ),
       );
       return;
     }
     if (_clubName.isEmpty) {
-      // Show validation error message using a Snackbar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Colors.red, // Set the background color to red
-          content: Text('club name is are required.'),
+          backgroundColor: Colors.red,
+          content: Text('Club name is required.'),
         ),
       );
       return;
     }
     if (_clubSportsType.isEmpty) {
-      // Show validation error message using a Snackbar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Colors.red, // Set the background color to red
+          backgroundColor: Colors.red,
           content: Text('Club sports type is required.'),
         ),
       );
       return;
     }
 
+    String _clubCreatorPhone = _clubCreatorPhoneController.text.trim();
+
+    if (_clubCreatorPhone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Club creator phone number is required.'),
+        ),
+      );
+      return;
+    }
+
+    RegExp phoneRegExp = RegExp(r'^\962\d{9}$');
+
+    if (!phoneRegExp.hasMatch(_clubCreatorPhone)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(
+              'Invalid phone number. Please provide a Jordanian phone number in the format +962xxxxxxxxx.'),
+        ),
+      );
+      return;
+    }
     // Get the current user
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
@@ -95,6 +116,7 @@ class _CreateClubPageState extends State<CreateClubPage> {
           'clubMembersId': _clubMembersID,
           'clubCreator': clubCreator,
           'clubCreatorId': clubCreatorId,
+          'clubCreatorPhone': _clubCreatorPhone,
         };
         DocumentReference newClubRef =
             await FirebaseFirestore.instance.collection('clubs').add(clubData);
@@ -158,6 +180,13 @@ class _CreateClubPageState extends State<CreateClubPage> {
                   });
                 },
               ),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Club Creator Phone',
+                ),
+                controller: _clubCreatorPhoneController,
+              ),
+
               SizedBox(height: 16.0),
               // Club Sports Type
               Text('Club Sports Type:'),
