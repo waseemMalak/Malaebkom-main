@@ -4,6 +4,7 @@ import 'package:malaebkom/player_profile.dart';
 import 'package:malaebkom/player_reservations.dart';
 import 'player_view_fields.dart';
 import 'player_view_matches.dart';
+import 'clubs_view_create.dart';
 
 import 'login.dart';
 import 'my_drawer_header_owner.dart';
@@ -172,45 +173,55 @@ class _PlayerState extends State<Player> {
                   ),
                 ),
                 Card(
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        height: 200,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
-                            width: 2.0,
-                          ),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ClubsViewCreate(),
                         ),
-                        child: Image.asset(
-                          'assets/images/clubss.webp',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          height: 50,
+                      );
+                    },
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          height: 200,
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 2.0,
+                            ),
                           ),
-                          child: Center(
-                            child: Text(
-                              'Clubs',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                          child: Image.asset(
+                            'assets/images/clubss.webp',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Clubs',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   elevation: 5,
                   margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
