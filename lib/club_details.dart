@@ -9,6 +9,7 @@ class ClubDetailsPage extends StatelessWidget {
   final List<String> clubSportsType;
   final String currentUserID;
   final String clubCreatorID;
+  final String clubID; // Add clubID as a parameter
 
   ClubDetailsPage({
     required this.clubName,
@@ -18,6 +19,7 @@ class ClubDetailsPage extends StatelessWidget {
     required this.clubSportsType,
     required this.currentUserID,
     required this.clubCreatorID,
+    required this.clubID, // Add clubID to the constructor
   });
 
   void sendJoinRequest(BuildContext context) async {
@@ -36,10 +38,11 @@ class ClubDetailsPage extends StatelessWidget {
     }
 
     if (userName != null) {
-      // Create a join request document in the club creator's document
+      // Create a join request document in the club's collection
+      print('club id = ' + clubID);
       await FirebaseFirestore.instance
-          .collection('users')
-          .doc(clubCreatorID)
+          .collection('clubs')
+          .doc(clubID)
           .collection('joinRequests')
           .doc(currentUserID)
           .set({
@@ -124,21 +127,21 @@ class ClubDetailsPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 16.0),
+                  if (isCurrentUserClubCreator)
+                    Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        'Player Requests',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
           ),
-          if (isCurrentUserClubCreator)
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Player Requests', // Add your content here
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
           if (!isCurrentUserClubCreator)
             ElevatedButton(
               onPressed: () {
