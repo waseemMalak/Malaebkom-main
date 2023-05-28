@@ -22,7 +22,7 @@ class ClubDetailsPage extends StatelessWidget {
     required this.clubID, // Add clubID to the constructor
   });
 
-  void sendJoinRequest(BuildContext context) async {
+  Future<void> sendJoinRequest(BuildContext context) async {
     String? userName;
 
     // Retrieve the current user's name from the 'users' collection
@@ -39,7 +39,6 @@ class ClubDetailsPage extends StatelessWidget {
 
     if (userName != null) {
       // Create a join request document in the club's collection
-      print('club id = ' + clubID);
       await FirebaseFirestore.instance
           .collection('clubs')
           .doc(clubID)
@@ -63,6 +62,29 @@ class ClubDetailsPage extends StatelessWidget {
         ),
       );
     }
+  }
+
+  Future<void> approveJoinRequest(String joinRequestID) async {
+    await FirebaseFirestore.instance
+        .collection('clubs')
+        .doc(clubID)
+        .collection('joinRequests')
+        .doc(joinRequestID)
+        .update({'status': 'approved'});
+
+    // Add the user to the clubMembers list
+    await FirebaseFirestore.instance.collection('clubs').doc(clubID).update({
+      'clubMembers': FieldValue.arrayUnion([joinRequestID])
+    });
+  }
+
+  Future<void> rejectJoinRequest(String joinRequestID) async {
+    await FirebaseFirestore.instance
+        .collection('clubs')
+        .doc(clubID)
+        .collection('joinRequests')
+        .doc(joinRequestID)
+        .delete();
   }
 
   @override
@@ -132,12 +154,75 @@ class ClubDetailsPage extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Text(
-                        'Player Requests',
+                        'Join Requests',
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                    ),
+                  if (isCurrentUserClubCreator)
+                    StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('clubs')
+                          .doc(clubID)
+                          .collection('joinRequests')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return CircularProgressIndicator();
+                        }
+
+                        List<Widget> joinRequestsWidgets = [];
+                        List<DocumentSnapshot> joinRequests =
+                            snapshot.data!.docs;
+
+                        for (var joinRequest in joinRequests) {
+                          String joinRequestID = joinRequest.id;
+                          String userName =
+                              joinRequest['userName'] ?? 'Unknown User';
+                          String userID = joinRequest['userID'] ?? '';
+
+                          String status = joinRequest['status'] ?? 'unknown';
+
+                          Widget joinRequestWidget = ListTile(
+                            title: Text(userName),
+                            subtitle: Text('ID: $userID'),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    approveJoinRequest(joinRequestID);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors
+                                        .green, // Set button color to green
+                                  ),
+                                  child: Text('Approve'),
+                                ),
+                                SizedBox(width: 8.0),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    rejectJoinRequest(joinRequestID);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    primary:
+                                        Colors.red, // Set button color to red
+                                  ),
+                                  child: Text('Reject'),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          joinRequestsWidgets.add(joinRequestWidget);
+                        }
+
+                        return Column(
+                          children: joinRequestsWidgets,
+                        );
+                      },
                     ),
                 ],
               ),
@@ -164,14 +249,32 @@ class ClubDetailsPage extends StatelessWidget {
                             sendJoinRequest(context);
                             Navigator.pop(context);
                           },
-                          child: Text('Send Request'),
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors
+                                .green, // Set the background color to green
+                          ),
+                          child: Text(
+                            'Send Request',
+                            style: TextStyle(
+                              color:
+                                  Colors.white, // Set the text color to white
+                            ),
+                          ),
                         ),
                       ],
                     );
                   },
                 );
               },
-              child: Text('Join Club'),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.green, // Set the background color to green
+              ),
+              child: Text(
+                'Join Club',
+                style: TextStyle(
+                  color: Colors.white, // Set the text color to white
+                ),
+              ),
             ),
         ],
       ),
