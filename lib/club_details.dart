@@ -64,21 +64,39 @@ class ClubDetailsPage extends StatelessWidget {
     }
   }
 
-  Future<void> approveJoinRequest(String joinRequestID) async {
-    await FirebaseFirestore.instance
+  void approveJoinRequest(String joinRequestID) async {
+    // Retrieve the join request document
+    DocumentSnapshot joinRequestSnapshot = await FirebaseFirestore.instance
         .collection('clubs')
         .doc(clubID)
         .collection('joinRequests')
         .doc(joinRequestID)
-        .update({'status': 'approved'});
+        .get();
 
-    // Add the user to the clubMembers list
-    await FirebaseFirestore.instance.collection('clubs').doc(clubID).update({
-      'clubMembers': FieldValue.arrayUnion([joinRequestID])
-    });
+    if (joinRequestSnapshot.exists) {
+      Map<String, dynamic> joinRequestData =
+          joinRequestSnapshot.data() as Map<String, dynamic>;
+      String userName = joinRequestData['userName'];
+      String userID = joinRequestData['userID'];
+
+      // Update the club document to add the user to clubMembers and clubMembersID lists
+      await FirebaseFirestore.instance.collection('clubs').doc(clubID).update({
+        'clubMembers': FieldValue.arrayUnion([userName]),
+        'clubMembersID': FieldValue.arrayUnion([userID]),
+      });
+
+      // Delete the join request document
+      await FirebaseFirestore.instance
+          .collection('clubs')
+          .doc(clubID)
+          .collection('joinRequests')
+          .doc(joinRequestID)
+          .delete();
+    }
   }
 
-  Future<void> rejectJoinRequest(String joinRequestID) async {
+  void rejectJoinRequest(String joinRequestID) async {
+    // Delete the join request document
     await FirebaseFirestore.instance
         .collection('clubs')
         .doc(clubID)

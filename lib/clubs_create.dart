@@ -17,6 +17,7 @@ class _CreateClubPageState extends State<CreateClubPage> {
   String _clubName = '';
   List<String> _clubSportsType = [];
   List<String> _clubMembers = [];
+  List<String> _clubMembersID = [];
 
   Future<void> _uploadClubLogo() async {
     final picker = ImagePicker();
@@ -91,6 +92,7 @@ class _CreateClubPageState extends State<CreateClubPage> {
           'clubName': _clubName,
           'clubSportsType': _clubSportsType,
           'clubMembers': _clubMembers,
+          'clubMembersId': _clubMembersID,
           'clubCreator': clubCreator,
           'clubCreatorId': clubCreatorId,
         };
@@ -196,7 +198,7 @@ class _CreateClubPageState extends State<CreateClubPage> {
               // Submit Button
               ElevatedButton(
                 onPressed: _createClub,
-                child: Text('Create a Club+'),
+                child: Text('Create Club'),
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
