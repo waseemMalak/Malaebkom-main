@@ -48,6 +48,7 @@ class ClubDetailsPage extends StatelessWidget {
           .set({
         'userName': userName,
         'userID': currentUserID,
+        'status': 'pending',
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
