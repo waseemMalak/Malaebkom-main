@@ -145,14 +145,6 @@ class ClubDetailsPage extends StatelessWidget {
                   ),
                   SizedBox(height: 8.0),
                   Text(
-                    'Club Captains:', // Fill this with content later
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(
                     'Club Members: ${clubMembers.join(", ")}',
                     style: TextStyle(
                       fontSize: 16.0,
@@ -195,6 +187,27 @@ class ClubDetailsPage extends StatelessWidget {
                         List<DocumentSnapshot> joinRequests =
                             snapshot.data!.docs;
 
+                        if (joinRequests.isEmpty) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.black,
+                                width: 2.0,
+                              ),
+                            ),
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(
+                              child: Text(
+                                'Currently No Join Requests Available',
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        }
+
                         for (var joinRequest in joinRequests) {
                           String joinRequestID = joinRequest.id;
                           String userName =
@@ -236,10 +249,16 @@ class ClubDetailsPage extends StatelessWidget {
 
                           joinRequestsWidgets.add(joinRequestWidget);
                         }
-
-                        return Column(
-                          children: joinRequestsWidgets,
-                        );
+                        return Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.black,
+                                width: 2.0,
+                              ),
+                            ),
+                            child: Column(
+                              children: joinRequestsWidgets,
+                            ));
                       },
                     ),
                 ],
