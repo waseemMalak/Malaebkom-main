@@ -77,15 +77,14 @@ class _CreateClubPageState extends State<CreateClubPage> {
       );
       return;
     }
-
-    RegExp phoneRegExp = RegExp(r'^\962\d{9}$');
+    RegExp phoneRegExp = RegExp(r'^(079|077)\d{7}$');
 
     if (!phoneRegExp.hasMatch(_clubCreatorPhone)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
           content: Text(
-              'Invalid phone number. Please provide a Jordanian phone number in the format +962xxxxxxxxx.'),
+              'Invalid phone number. Please provide a Jordanian phone number in the format 079 or 077 follow by 7 digits'),
         ),
       );
       return;
@@ -183,6 +182,8 @@ class _CreateClubPageState extends State<CreateClubPage> {
               TextField(
                 decoration: InputDecoration(
                   labelText: 'Club Creator Phone',
+                  hintText: '079 or 077 followed by 7 digits',
+                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.2)),
                 ),
                 controller: _clubCreatorPhoneController,
               ),

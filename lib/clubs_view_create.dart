@@ -86,6 +86,8 @@ class _ClubsViewCreateState extends State<ClubsViewCreate> {
                               FirebaseAuth.instance.currentUser?.uid ?? '';
 
                           String clubCreatorID = clubData['clubCreatorId'];
+                          String clubCreatorPhone =
+                              clubData['clubCreatorPhone'];
 
                           return ListTile(
                             tileColor: Colors.green,
@@ -129,6 +131,7 @@ class _ClubsViewCreateState extends State<ClubsViewCreate> {
                                       clubCreatorID: clubCreatorID,
                                       clubID:
                                           clubID, // Pass the clubID to ClubDetailsPag
+                                      clubCreatorPhone: clubCreatorPhone,
                                     ),
                                   ),
                                 );

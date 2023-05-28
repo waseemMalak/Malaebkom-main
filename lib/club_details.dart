@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ClubDetailsPage extends StatelessWidget {
   final String clubName;
@@ -10,6 +12,7 @@ class ClubDetailsPage extends StatelessWidget {
   final String currentUserID;
   final String clubCreatorID;
   final String clubID; // Add clubID as a parameter
+  final String clubCreatorPhone;
 
   ClubDetailsPage({
     required this.clubName,
@@ -20,6 +23,7 @@ class ClubDetailsPage extends StatelessWidget {
     required this.currentUserID,
     required this.clubCreatorID,
     required this.clubID, // Add clubID to the constructor
+    required this.clubCreatorPhone,
   });
 
   Future<void> sendJoinRequest(BuildContext context) async {
@@ -61,6 +65,25 @@ class ClubDetailsPage extends StatelessWidget {
           content: Text('Failed to send membership request'),
         ),
       );
+    }
+  }
+
+  void launchPhoneCall(String phoneNumber) async {
+    String url = 'tel:$phoneNumber';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch phone call';
+    }
+  }
+
+  void launchWhatsAppChat(String phoneNumber) async {
+    String formattedPhoneNumber = '+962$phoneNumber'; // Prepend country code
+    String url = 'https://wa.me/$formattedPhoneNumber';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch WhatsApp chat';
     }
   }
 
@@ -261,6 +284,42 @@ class ClubDetailsPage extends StatelessWidget {
                             ));
                       },
                     ),
+                  Container(
+                    margin:
+                        EdgeInsets.symmetric(vertical: 12.0, horizontal: 0.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 2.0),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                              'Contact Club Owner at: ' + clubCreatorPhone),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            launchPhoneCall(clubCreatorPhone);
+                          },
+                          icon: Icon(
+                            Icons.phone,
+                            color: Colors.green,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            String phoneNumber = '+962' + clubCreatorPhone;
+                            launch('https://wa.me/$phoneNumber');
+                          },
+                          icon: FaIcon(
+                            FontAwesomeIcons.whatsapp,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
