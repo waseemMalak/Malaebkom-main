@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'clubs_create.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'club_details.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ClubsViewCreate extends StatefulWidget {
   const ClubsViewCreate({Key? key}) : super(key: key);
@@ -76,8 +77,15 @@ class _ClubsViewCreateState extends State<ClubsViewCreate> {
                           // Extract club logo, name, and sports types
                           String clubLogo = clubData['clubLogo'];
                           String clubName = clubData['clubName'];
+                          String clubCreator = clubData['clubCreator'];
+                          List<String> clubMembers =
+                              List<String>.from(clubData['clubMembers']);
                           List<String> clubSportsType =
                               List<String>.from(clubData['clubSportsType']);
+                          String currentUserID =
+                              FirebaseAuth.instance.currentUser?.uid ?? '';
+
+                          String clubCreatorID = clubData['clubCreatorId'];
 
                           return ListTile(
                             tileColor: Colors.green,
@@ -110,7 +118,15 @@ class _ClubsViewCreateState extends State<ClubsViewCreate> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ClubDetailsPage(),
+                                    builder: (context) => ClubDetailsPage(
+                                      clubName: clubName,
+                                      clubLogo: clubLogo,
+                                      clubCreator: clubCreator,
+                                      clubMembers: clubMembers,
+                                      clubSportsType: clubSportsType,
+                                      currentUserID: currentUserID,
+                                      clubCreatorID: clubCreatorID,
+                                    ),
                                   ),
                                 );
                               },

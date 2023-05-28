@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'clubs_view_create.dart';
 
 class CreateClubPage extends StatefulWidget {
   @override
@@ -35,21 +37,84 @@ class _CreateClubPageState extends State<CreateClubPage> {
   }
 
   void _createClub() async {
-    if (_clubLogo != null &&
-        _clubName.isNotEmpty &&
-        _clubSportsType.isNotEmpty) {
-      // Create a new document in the "clubs" collection
-      final clubData = {
-        'clubLogo': _clubLogo,
-        'clubName': _clubName,
-        'clubSportsType': _clubSportsType,
-        'clubMembers': _clubMembers,
-      };
-      await FirebaseFirestore.instance.collection('clubs').add(clubData);
+    if (_clubLogo == null) {
+      // Show validation error message using a Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red, // Set the background color to red
+          content: Text('Club logo is required.'),
+        ),
+      );
+      return;
+    }
+    if (_clubName.isEmpty) {
+      // Show validation error message using a Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red, // Set the background color to red
+          content: Text('club name is are required.'),
+        ),
+      );
+      return;
+    }
+    if (_clubSportsType.isEmpty) {
+      // Show validation error message using a Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red, // Set the background color to red
+          content: Text('Club sports type is required.'),
+        ),
+      );
+      return;
+    }
 
-      // Show a success message or navigate back to the previous page
-    } else {
-      // Show an error message or handle the case where required fields are not filled
+    // Get the current user
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      // Retrieve the user's name from the "users" collection
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
+
+      // Check if the user exists in the "users" collection
+      if (userSnapshot.exists) {
+        // Retrieve the user's name
+        String clubCreator = userSnapshot['userName'];
+
+        // Retrieve the user's ID
+        String clubCreatorId = currentUser.uid;
+
+        // Create a new document in the "clubs" collection
+        final clubData = {
+          'clubLogo': _clubLogo,
+          'clubName': _clubName,
+          'clubSportsType': _clubSportsType,
+          'clubMembers': _clubMembers,
+          'clubCreator': clubCreator,
+          'clubCreatorId': clubCreatorId,
+        };
+        DocumentReference newClubRef =
+            await FirebaseFirestore.instance.collection('clubs').add(clubData);
+
+        // Show a success message or navigate to the ClubsViewCreate page
+        if (newClubRef.id != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ClubsViewCreate(),
+            ),
+          );
+        } else {
+          // Handle error creating the club document
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red, // Set the background color to red
+              content: Text('Failed to create the club. Please try again.'),
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -109,8 +174,6 @@ class _CreateClubPageState extends State<CreateClubPage> {
               ),
               SizedBox(height: 16.0),
               // Club Members
-              Text('Club Members:'),
-              // Implement logic to handle club members (add/remove)
 
               ListView.builder(
                 shrinkWrap: true,
