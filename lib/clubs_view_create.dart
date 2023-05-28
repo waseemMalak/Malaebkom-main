@@ -115,6 +115,7 @@ class _ClubsViewCreateState extends State<ClubsViewCreate> {
                             ),
                             trailing: ElevatedButton(
                               onPressed: () {
+                                String clubID = clubDocuments[index].id;
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -126,6 +127,8 @@ class _ClubsViewCreateState extends State<ClubsViewCreate> {
                                       clubSportsType: clubSportsType,
                                       currentUserID: currentUserID,
                                       clubCreatorID: clubCreatorID,
+                                      clubID:
+                                          clubID, // Pass the clubID to ClubDetailsPag
                                     ),
                                   ),
                                 );
