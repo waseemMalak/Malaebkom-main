@@ -9,6 +9,7 @@ import 'my_drawer_header_owner.dart';
 import 'player_view_fields.dart';
 import 'player_view_matches.dart';
 import 'owner_Reservations.dart';
+import 'package:flutter/services.dart';
 
 class EditProfileDialog extends StatefulWidget {
   final String email;
@@ -117,6 +118,21 @@ class _PlayerProfileState extends State<PlayerProfile> {
     //     TextEditingController(text: getCurrentUserName().toString());
     TextEditingController _phoneController = TextEditingController();
 
+    Future<String?> fetchImageURL() async {
+      try {
+        final userId = FirebaseAuth.instance.currentUser!.uid;
+        final userData = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .get();
+        final imageUrl = userData['image_url'];
+        return imageUrl;
+      } catch (e) {
+        print('Error fetching image URL: $e');
+        return null;
+      }
+    }
+
     @override
     void initState() {
       super.initState();
@@ -199,9 +215,38 @@ class _PlayerProfileState extends State<PlayerProfile> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           new CircleAvatar(
-                            backgroundImage:
-                                new AssetImage('assets/images/def.jpg'),
                             radius: _height / 10,
+                            child: FutureBuilder<String?>(
+                              future: fetchImageURL(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return CircularProgressIndicator();
+                                } else if (snapshot.hasError ||
+                                    snapshot.data == null) {
+                                  return CircleAvatar(
+                                    radius: _height / 10,
+                                    backgroundImage:
+                                        AssetImage('assets/images/def.jpg'),
+                                  );
+                                } else {
+                                  final imageUrl = snapshot.data!;
+                                  if (imageUrl == 'assets/images/def.jpg') {
+                                    return CircleAvatar(
+                                      radius: _height / 10,
+                                      backgroundImage: AssetImage(imageUrl),
+                                      backgroundColor: Colors.transparent,
+                                    );
+                                  } else {
+                                    return CircleAvatar(
+                                      radius: _height / 10,
+                                      backgroundImage: NetworkImage(imageUrl),
+                                      backgroundColor: Colors.transparent,
+                                    );
+                                  }
+                                }
+                              },
+                            ),
                           ),
                           new SizedBox(
                             height: _height / 30,
