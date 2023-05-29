@@ -146,10 +146,10 @@ class _RegisterState extends State<Register> {
 
                             // Regular expression pattern for validating Jordanian phone numbers
                             final RegExp phoneRegex =
-                                RegExp(r'^\+?9627[789]\d{7}$');
+                                RegExp(r'^(079|077)\d{7}$');
 
                             if (!phoneRegex.hasMatch(value)) {
-                              return "Please enter a valid Jordanian phone number start with +962";
+                              return "079 or 077 followed by 7 digits";
                             }
 
                             return null;

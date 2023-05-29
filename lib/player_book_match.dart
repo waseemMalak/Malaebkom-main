@@ -46,6 +46,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
   double selectedDuration = 1.0; // Default duration multiplier
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
+  bool recordMatch = false; // Checkbox state
 
   RegExp phoneNumberPattern = RegExp(r'^07[789]\d{7}$');
 
@@ -205,6 +206,10 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
   @override
   Widget build(BuildContext context) {
     double price = widget.field['price'] * selectedDuration;
+
+    if (recordMatch) {
+      price += 15; // Add $15 to the total price if "Record Match" is selected
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -298,6 +303,23 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                 'This match is private only you can see this match'),
             _buildMatchTypeRadioButton(MatchType.public, 'Public Match',
                 'This match is public other users can see this match and Join!'),
+            SizedBox(height: 10),
+            Text(
+              'Want Your match Recorded? (15 JOD Extra):',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            CheckboxListTile(
+              title: Text("Record Match?"),
+              value: recordMatch,
+              onChanged: (value) {
+                setState(() {
+                  recordMatch = value!;
+                });
+              },
+            ),
             Text(
               'Field booking total price: ${price.toStringAsFixed(2)} JD',
               style: TextStyle(fontSize: 18),
@@ -368,6 +390,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                   'matchLocation': widget.field['location'],
                   'matchDescription': description,
                   'playersJoined': playersJoined,
+                  'isRecorded': recordMatch,
                 }).then((value) {
                   showDialog(
                     context: context,
