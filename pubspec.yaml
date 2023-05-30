@@ -54,6 +54,7 @@ dependencies:
   intl: ^0.17.0
   font_awesome_flutter: ^9.2.0
   cached_network_image: ^3.0.0
+  dartdoc: ^6.2.2
 
 
 
