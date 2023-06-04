@@ -113,7 +113,6 @@ class _FieldOwnerState extends State<FieldOwner> {
                       final fieldImages = documents[index]['fieldImages'];
                       final fieldId = documents[index].id;
                       final price = documents[index]['price'];
-                      // final fieldServices = documents[index]['fieldServices'];
                       final fieldServices = documents[index]['fieldServices'];
                       final services = fieldServices is String
                           ? [fieldServices]
@@ -216,7 +215,7 @@ class _FieldOwnerState extends State<FieldOwner> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          newfieldPage(context); // TOD: Implement logic for adding new field
+          newfieldPage(context);
         },
         icon: Icon(Icons.add),
         label: Text('Add new Field'),
@@ -328,7 +327,7 @@ class FieldCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              field.fieldName, // Display field name above the image
+              field.fieldName,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Container(

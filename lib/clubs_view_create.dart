@@ -70,11 +70,10 @@ class _ClubsViewCreateState extends State<ClubsViewCreate> {
                         separatorBuilder: (context, index) =>
                             SizedBox(height: 4),
                         itemBuilder: (context, index) {
-                          // Extract the club data from the document snapshot
+                          // get the club data from the document snapshot
                           Map<String, dynamic> clubData = clubDocuments[index]
                               .data() as Map<String, dynamic>;
 
-                          // Extract club logo, name, and sports types
                           String clubLogo = clubData['clubLogo'];
                           String clubName = clubData['clubName'];
                           String clubCreator = clubData['clubCreator'];
@@ -94,7 +93,7 @@ class _ClubsViewCreateState extends State<ClubsViewCreate> {
                             leading: Container(
                               width: 80,
                               height: 80,
-                              color: Colors.white, // White background color
+                              color: Colors.white,
                               child: Image.network(
                                 clubLogo,
                                 fit: BoxFit.contain,
@@ -129,8 +128,7 @@ class _ClubsViewCreateState extends State<ClubsViewCreate> {
                                       clubSportsType: clubSportsType,
                                       currentUserID: currentUserID,
                                       clubCreatorID: clubCreatorID,
-                                      clubID:
-                                          clubID, // Pass the clubID to ClubDetailsPag
+                                      clubID: clubID,
                                       clubCreatorPhone: clubCreatorPhone,
                                     ),
                                   ),

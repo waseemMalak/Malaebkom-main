@@ -81,7 +81,6 @@ class _LoginPageState extends State<LoginPage> {
                               borderSide: new BorderSide(color: Colors.grey),
                               borderRadius: new BorderRadius.circular(20),
                             ),
-
                             enabledBorder: OutlineInputBorder(
                               borderSide:
                                   BorderSide(width: 3, color: Colors.grey),
@@ -91,17 +90,6 @@ class _LoginPageState extends State<LoginPage> {
                             fillColor: Colors.white,
                             hintText: 'Email',
                             enabled: true,
-                            // contentPadding: const EdgeInsets.only(
-                            //     left: 14.0, bottom: 8.0, top: 8.0),
-                            // focusedBorder: OutlineInputBorder(
-                            //   borderSide: new BorderSide(color: Colors.grey),
-                            //   borderRadius: new BorderRadius.circular(10),
-                            // ),
-                            // enabledBorder: UnderlineInputBorder(
-                            //   borderSide:
-                            //       new BorderSide(width: 3, color: Colors.grey),
-                            //   borderRadius: new BorderRadius.circular(10),
-                            // ),
                           ),
                           validator: (value) {
                             if (value!.length == 0) {

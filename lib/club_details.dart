@@ -11,7 +11,7 @@ class ClubDetailsPage extends StatelessWidget {
   final List<String> clubSportsType;
   final String currentUserID;
   final String clubCreatorID;
-  final String clubID; // Add clubID as a parameter
+  final String clubID;
   final String clubCreatorPhone;
 
   ClubDetailsPage({
@@ -22,7 +22,7 @@ class ClubDetailsPage extends StatelessWidget {
     required this.clubSportsType,
     required this.currentUserID,
     required this.clubCreatorID,
-    required this.clubID, // Add clubID to the constructor
+    required this.clubID,
     required this.clubCreatorPhone,
   });
 
@@ -78,7 +78,7 @@ class ClubDetailsPage extends StatelessWidget {
   }
 
   void launchWhatsAppChat(String phoneNumber) async {
-    String formattedPhoneNumber = '+962$phoneNumber'; // Prepend country code
+    String formattedPhoneNumber = '+962$phoneNumber';
     String url = 'https://wa.me/$formattedPhoneNumber';
     if (await canLaunch(url)) {
       await launch(url);
@@ -88,7 +88,6 @@ class ClubDetailsPage extends StatelessWidget {
   }
 
   void approveJoinRequest(String joinRequestID) async {
-    // Retrieve the join request document
     DocumentSnapshot joinRequestSnapshot = await FirebaseFirestore.instance
         .collection('clubs')
         .doc(clubID)
@@ -346,14 +345,12 @@ class ClubDetailsPage extends StatelessWidget {
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: Colors
-                                .green, // Set the background color to green
+                            primary: Colors.green,
                           ),
                           child: Text(
                             'Send Request',
                             style: TextStyle(
-                              color:
-                                  Colors.white, // Set the text color to white
+                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -363,12 +360,12 @@ class ClubDetailsPage extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.green, // Set the background color to green
+                primary: Colors.green,
               ),
               child: Text(
                 'Join Club',
                 style: TextStyle(
-                  color: Colors.white, // Set the text color to white
+                  color: Colors.white,
                 ),
               ),
             ),

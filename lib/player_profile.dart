@@ -70,7 +70,6 @@ class _EditProfileDialogState extends State<EditProfileDialog> {
         TextButton(
           child: Text('Save'),
           onPressed: () {
-            // Call a function to update the user's email and phone number
             saveProfileChanges(
               _emailController.text,
               _phoneController.text,
@@ -114,8 +113,7 @@ class _PlayerProfileState extends State<PlayerProfile> {
   Widget build(BuildContext context) {
     TextEditingController _emailController =
         TextEditingController(text: getCurrentUseremail().toString());
-    // TextEditingController _phoneController =
-    //     TextEditingController(text: getCurrentUserName().toString());
+
     TextEditingController _phoneController = TextEditingController();
 
     Future<String?> fetchImageURL() async {
@@ -136,7 +134,7 @@ class _PlayerProfileState extends State<PlayerProfile> {
     @override
     void initState() {
       super.initState();
-      // Fetch the phone number from Firestore and set it as the initial value
+
       getCurrentphone().then((phone) async {
         setState(() {
           _phoneController.text =
@@ -155,12 +153,8 @@ class _PlayerProfileState extends State<PlayerProfile> {
             .collection('users')
             .doc(FirebaseAuth.instance.currentUser!.uid)
             .update({'phone': newPhone});
-
-        // Show a success message or perform any other desired action
       } catch (e) {
-        // Handle any errors that occur during the update process
         print(e.toString());
-        // Show an error message or perform any other desired action
       }
     }
 

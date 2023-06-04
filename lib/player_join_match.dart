@@ -38,16 +38,14 @@ class PlayerJoinMatchPage extends StatelessWidget {
 
     print('joinedPlayers: $joinedPlayers');
 
-    // Check if the user ID is already in the joined players list
+    // Check if the userName is already in the joined players list
     if (!joinedPlayers.contains(userName)) {
-      // Add the new player's ID to the list
+      // Add the new player's userName to the list
       joinedPlayers.add(userName);
 
       // Update the 'playersJoined' field in the match document
       await match.reference.update({'playersJoined': joinedPlayers});
     }
-
-    // Perform any additional actions after joining the match
   }
 
   @override
@@ -134,7 +132,7 @@ class PlayerJoinMatchPage extends StatelessWidget {
                         style: TextStyle(fontSize: 18),
                       ),
                       Container(
-                        width: 30, // Adjust the width as needed
+                        width: 30,
                         child: IconButton(
                           icon: Icon(Icons.phone),
                           color: Colors.green,
@@ -145,7 +143,7 @@ class PlayerJoinMatchPage extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        width: 30, // Adjust the width as needed
+                        width: 30,
                         child: IconButton(
                           icon: FaIcon(
                             FontAwesomeIcons.whatsapp,
@@ -272,8 +270,7 @@ class PlayerJoinMatchPage extends StatelessWidget {
                                 TextButton(
                                   child: Text('OK'),
                                   onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
+                                    Navigator.of(context).pop();
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(

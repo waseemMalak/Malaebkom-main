@@ -20,8 +20,8 @@ class PlayerViewFieldDetials extends StatefulWidget {
 class _PlayerViewFieldDetialsState extends State<PlayerViewFieldDetials> {
   String _locationName = '';
   CarouselController _carouselController = CarouselController();
-  double _rating = 0.0; // Initial rating value
-  int _ratingCount = 0; // Number of ratings
+  double _rating = 0.0;
+  int _ratingCount = 0;
 
   @override
   void initState() {
@@ -64,15 +64,14 @@ class _PlayerViewFieldDetialsState extends State<PlayerViewFieldDetials> {
     }
   }
 
-  bool _isRated = false; // Flag to indicate if user has rated or not
+  bool _isRated = false;
 
   void _onRatingChanged(double rating) {
     if (!_isRated) {
-      // Save the rating to Firestore or perform any other necessary actions
       setState(() {
         _rating = rating;
-        _ratingCount++; // Increment the rating count
-        _isRated = true; // Set the flag to true to disable further rating
+        _ratingCount++;
+        _isRated = true;
       });
     }
   }
@@ -107,7 +106,7 @@ class _PlayerViewFieldDetialsState extends State<PlayerViewFieldDetials> {
                       viewportFraction: 1.0,
                       initialPage: 0,
                       enableInfiniteScroll: false,
-                      autoPlay: false, // Disable automatic slide transition
+                      autoPlay: false,
                       enlargeCenterPage: false,
                     ),
                   ),
@@ -126,7 +125,6 @@ class _PlayerViewFieldDetialsState extends State<PlayerViewFieldDetials> {
                             child: Icon(Icons.arrow_back),
                           ),
                           onPressed: () {
-                            // Move to the previous image
                             _carouselController.previousPage();
                           },
                         ),
@@ -137,7 +135,6 @@ class _PlayerViewFieldDetialsState extends State<PlayerViewFieldDetials> {
                             child: Icon(Icons.arrow_forward),
                           ),
                           onPressed: () {
-                            // Move to the next image
                             _carouselController.nextPage();
                           },
                         ),
@@ -168,7 +165,7 @@ class _PlayerViewFieldDetialsState extends State<PlayerViewFieldDetials> {
                   Row(
                     children: [
                       Container(
-                        width: 36, // Adjust the width as needed
+                        width: 36,
                         child: IconButton(
                           icon: Icon(Icons.phone),
                           color: Colors.green,
@@ -180,7 +177,7 @@ class _PlayerViewFieldDetialsState extends State<PlayerViewFieldDetials> {
                         ),
                       ),
                       Container(
-                        width: 36, // Adjust the width as needed
+                        width: 36,
                         child: IconButton(
                           icon: FaIcon(
                             FontAwesomeIcons.whatsapp,

@@ -48,8 +48,6 @@ class _FieldDetailsState extends State<FieldDetails> {
     _priceController =
         TextEditingController(text: widget.field.price.toString());
     _idController = TextEditingController(text: widget.field.fieldId);
-    // _fieldServicesContorller =
-    //     TextEditingController(text: widget.field.fieldServices.join(', '));
 
     final List<String> fieldServices = widget.field.fieldServices;
     _fieldServicesContorller =
@@ -181,20 +179,6 @@ class _FieldDetailsState extends State<FieldDetails> {
                   },
                 ),
                 SizedBox(height: 16.0),
-                // TextFormField(
-                //   controller: _imagePathController,
-                //   decoration: InputDecoration(
-                //     labelText: 'Image Path',
-                //     border: OutlineInputBorder(),
-                //   ),
-                //   validator: (value) {
-                //     if (value == null || value.isEmpty) {
-                //       return 'Please enter an image path';
-                //     }
-                //     return null;
-                //   },
-                // ),
-
                 FormField(
                   builder: (FormFieldState<String> state) {
                     return TextFormField(
@@ -248,7 +232,6 @@ class _FieldDetailsState extends State<FieldDetails> {
                     );
                   },
                 ),
-
                 SizedBox(
                   height: 3,
                 ),
@@ -279,7 +262,7 @@ class _FieldDetailsState extends State<FieldDetails> {
                       ),
                       Container(
                         color: Colors.grey[200],
-                        height: 120, // Set a fixed height for the list view
+                        height: 120,
                         child: Scrollbar(
                           isAlwaysShown: true,
                           child: ListView.builder(
@@ -335,7 +318,7 @@ class _FieldDetailsState extends State<FieldDetails> {
                         height: 8,
                       ),
                       Container(
-                        height: 120, // Set a fixed height for the list view
+                        height: 120,
                         color: Colors.grey[200],
                         child: Scrollbar(
                           isAlwaysShown: true,
@@ -389,7 +372,7 @@ class _FieldDetailsState extends State<FieldDetails> {
                     ElevatedButton.icon(
                       onPressed: () async {
                         deleteDocument(widget.field.fieldId);
-                        // Navigate back to the previous screen
+
                         Navigator.pop(context);
                       },
                       icon: Icon(Icons.delete),

@@ -115,21 +115,17 @@ class _PlayerReservationsState extends State<PlayerReservations> {
 
                           DateTime startingDateTime;
                           try {
-                            // Parse the starting hour from the stored format
                             startingDateTime =
                                 DateFormat('hh:mm a').parse(startingHour);
                           } catch (e) {
-                            // Handle parsing error
                             print('Error parsing starting hour: $e');
-                            // You can set a default value or handle the error in an appropriate way
+
                             startingDateTime = DateTime.now();
                           }
 
-// Create a DateTime object for the match date
                           final matchDateTime =
                               DateFormat('dd MMM yyyy').parse(matchDate);
 
-// Set the date portion of startingDateTime to matchDateTime
                           startingDateTime = DateTime(
                             matchDateTime.year,
                             matchDateTime.month,

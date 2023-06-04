@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:malaebkom/pickers/user_image_picker.dart';
 import 'login.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class Register extends StatefulWidget {
@@ -37,6 +36,7 @@ class _RegisterState extends State<Register> {
   var _currentItemSelected = "Player";
   var role = "Player";
 
+  ///to handle the case where the user don't insert an image and then  save default image path instead
   File? _userImageFile;
   void _pickedImage(File? image) {
     if (image != null) {
@@ -92,6 +92,7 @@ class _RegisterState extends State<Register> {
                         SizedBox(
                           height: 10,
                         ),
+                        //calls the UserImagePicker Widget to show the image circle and Add image text
                         UserImagePicker(_pickedImage),
                         SizedBox(
                           height: 10,
@@ -144,7 +145,7 @@ class _RegisterState extends State<Register> {
                               return "Phone Number cannot be empty";
                             }
 
-                            // Regular expression pattern for validating Jordanian phone numbers
+                            //This Regular expression pattern for validating Jordanian phone numbers making sure that starts with 079 or 077 followed by 7 digits
                             final RegExp phoneRegex =
                                 RegExp(r'^(079|077)\d{7}$');
 
@@ -161,8 +162,6 @@ class _RegisterState extends State<Register> {
                           height: 20,
                         ),
                         TextFormField(
-                          // obscureText: true,
-
                           controller: emailController,
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.only(
@@ -178,7 +177,6 @@ class _RegisterState extends State<Register> {
                               borderRadius: new BorderRadius.circular(15),
                             ),
                           ),
-
                           validator: (value) {
                             if (value!.length == 0) {
                               return "Email cannot be empty";

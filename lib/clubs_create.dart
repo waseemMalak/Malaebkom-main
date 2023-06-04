@@ -100,7 +100,6 @@ class _CreateClubPageState extends State<CreateClubPage> {
 
       // Check if the user exists in the "users" collection
       if (userSnapshot.exists) {
-        // Retrieve the user's name
         String clubCreator = userSnapshot['userName'];
 
         // Retrieve the user's ID
@@ -120,7 +119,6 @@ class _CreateClubPageState extends State<CreateClubPage> {
         DocumentReference newClubRef =
             await FirebaseFirestore.instance.collection('clubs').add(clubData);
 
-        // Show a success message or navigate to the ClubsViewCreate page
         if (newClubRef.id != null) {
           Navigator.pushReplacement(
             context,
@@ -129,10 +127,9 @@ class _CreateClubPageState extends State<CreateClubPage> {
             ),
           );
         } else {
-          // Handle error creating the club document
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: Colors.red, // Set the background color to red
+              backgroundColor: Colors.red,
               content: Text('Failed to create the club. Please try again.'),
             ),
           );
@@ -153,7 +150,6 @@ class _CreateClubPageState extends State<CreateClubPage> {
           padding: EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Club Logo
               GestureDetector(
                 onTap: _uploadClubLogo,
                 child: _clubLogo != null
@@ -168,7 +164,6 @@ class _CreateClubPageState extends State<CreateClubPage> {
                       ),
               ),
               SizedBox(height: 16.0),
-              // Club Name
               TextField(
                 decoration: InputDecoration(
                   labelText: 'Club Name',
@@ -187,9 +182,7 @@ class _CreateClubPageState extends State<CreateClubPage> {
                 ),
                 controller: _clubCreatorPhoneController,
               ),
-
               SizedBox(height: 16.0),
-              // Club Sports Type
               Text('Club Sports Type:'),
               Wrap(
                 children: [
@@ -205,8 +198,6 @@ class _CreateClubPageState extends State<CreateClubPage> {
                 ],
               ),
               SizedBox(height: 16.0),
-              // Club Members
-
               ListView.builder(
                 shrinkWrap: true,
                 itemCount: _clubMembers.length,
@@ -225,7 +216,6 @@ class _CreateClubPageState extends State<CreateClubPage> {
                 },
               ),
               SizedBox(height: 16.0),
-              // Submit Button
               ElevatedButton(
                 onPressed: _createClub,
                 child: Text('Create Club'),

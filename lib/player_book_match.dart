@@ -46,7 +46,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
   double selectedDuration = 1.0; // Default duration multiplier
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
-  bool recordMatch = false; // Checkbox state
+  bool recordMatch = false;
 
   RegExp phoneNumberPattern = RegExp(r'^07[789]\d{7}$');
 
@@ -159,7 +159,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
   }
 
   TimeOfDay _parseTimeOfDay(String timeString) {
-    final format = DateFormat.jm(); // h:mm a
+    final format = DateFormat.jm();
     final time = format.parse(timeString);
     return TimeOfDay(hour: time.hour, minute: time.minute);
   }
@@ -291,7 +291,6 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                 border: OutlineInputBorder(),
               ),
             ),
-
             Text('Select Duration:'),
             _buildDurationRadioButton(DurationSelection.oneHour, '1 Hour', 1),
             _buildDurationRadioButton(
@@ -310,7 +309,6 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-
             CheckboxListTile(
               title: Text("Record Match?"),
               value: recordMatch,
@@ -324,8 +322,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
               'Field booking total price: ${price.toStringAsFixed(2)} JD',
               style: TextStyle(fontSize: 18),
             ),
-
-            Spacer(), // Add a spacer to push the button to the bottom
+            Spacer(),
             ElevatedButton(
               onPressed: () async {
                 String? userId = FirebaseAuth.instance.currentUser?.uid;
@@ -356,7 +353,7 @@ class _PlayerBookMatchState extends State<PlayerBookMatch> {
                   );
                   return;
                 }
-                // Retrieve the userName from the "users" collection
+                // Retrieve the userName and userPhone from the "users" collection
                 DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
                     .collection('users')
                     .doc(userId)

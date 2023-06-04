@@ -108,7 +108,6 @@ class ownerProfile extends StatefulWidget {
 
 class _ownerProfileState extends State<ownerProfile> {
   var currentPage = DrawerSections.profile;
-  //final ref= FirbaseDatabase.instance.ref('user');
 
   Future<String?> fetchImageURL() async {
     try {
@@ -474,7 +473,6 @@ Future<void> reservationPage(BuildContext context) async {
   );
 }
 
-// Updated headerChild widget:
 Widget headerChild(String header, Future<int>? value, {int fallback = 0}) =>
     Expanded(
       child: Column(

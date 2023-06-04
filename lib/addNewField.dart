@@ -6,14 +6,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'field_owner.dart';
-
-import '../pickers/user_image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 
 class FieldOwnerForm extends StatefulWidget {
   @override
@@ -172,57 +168,8 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
   TimeOfDay _openingHoursEnd = TimeOfDay(hour: 20, minute: 0);
 
   late GoogleMapController _controller;
-  LatLng _pickedLocation = LatLng(31.9632, 35.9306); // Set default value her
-
-  void _selectLocation() async {
-    final selectedLocation = await Navigator.push<LatLng>(
-      context,
-      MaterialPageRoute(
-        builder: (ctx) => MapPage(initialLocation: _pickedLocation),
-      ),
-    );
-    if (selectedLocation != null) {
-      setState(() {
-        _pickedLocation = selectedLocation;
-        _locationController.text =
-            '${_pickedLocation.latitude}, ${_pickedLocation.longitude}';
-      });
-      print('Selected location: $_pickedLocation');
-    } else {
-      print('No location selected.');
-    }
-  }
-
-  Future<void> _selectOnMap() async {
-    final selectedLocation = await Navigator.of(context).push<LatLng>(
-      MaterialPageRoute(
-        builder: (ctx) => MapPage(
-          initialLocation: _pickedLocation,
-        ),
-      ),
-    );
-    if (selectedLocation != null) {
-      setState(() {
-        _pickedLocation = selectedLocation;
-      });
-    }
-  }
-
-  Future<void> _navigateToMap() async {
-    final selectedLocation = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (ctx) => MapPage(
-          initialLocation: _pickedLocation,
-        ),
-      ),
-    );
-    if (selectedLocation != null) {
-      setState(() {
-        _pickedLocation = selectedLocation;
-      });
-    }
-  }
+  LatLng _pickedLocation = LatLng(31.9632,
+      35.9306); // This sets default value of where the location pin should start
 
   final List<String> _services = [
     'None',
@@ -430,9 +377,7 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                         setState(() {
                           _fieldImages = resultList;
                         });
-                      } else {
-                        // Handle the case where the user denied permission
-                      }
+                      } else {}
                     },
                     child: Row(
                       children: [
@@ -513,7 +458,7 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                           height: 8,
                         ),
                         Container(
-                          height: 120, // Set a fixed height for the listview
+                          height: 120,
                           color: Colors.grey[200],
                           child: Scrollbar(
                             isAlwaysShown: true,
@@ -569,7 +514,7 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
                           height: 8,
                         ),
                         Container(
-                          height: 120, // Set a fixed height for the list view
+                          height: 120,
                           color: Colors.grey[200],
                           child: Scrollbar(
                             isAlwaysShown: true,
@@ -720,11 +665,8 @@ class _FieldOwnerFormState extends State<FieldOwnerForm> {
       await FirebaseFirestore.instance.collection('fields').add({
         'fieldName': _fieldNameController.text,
         'price': double.parse(_priceController.text),
-        // 'location': GeoPoint(_pickedLocation.latitude, _pickedLocation.longitude),
         'location': _locationController.text,
-        // 'fieldImages': _fieldImagesController.text.split(','),
         'fieldImages': imageUrls,
-        // 'fieldServices': _fieldServicesController.text.split(','),
         'fieldServices': _selectedServices.join(','),
         'fieldSports': _selectedSportsType.join(','),
         'openingHours':
